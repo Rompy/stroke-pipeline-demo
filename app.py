@@ -386,18 +386,6 @@ with st.expander("STEP 2 — Multi-Tiered Validation (Rule → RAG → Cosine �
         radiology_reports[selected]
     )
 
-    # 📌 Show LLM feedback loop trigger if flagged
-    flagged = any("❗" in msg for stage in validation.values() for msg in stage)
-
-    if flagged:
-        st.markdown("""
-        <div style='margin:12px 0;padding:10px 15px;
-            border-left:5px solid #d9534f;background:#fdecec;border-radius:6px;'>
-            <b>❗ Validation flagged inconsistencies</b><br>
-            <span style='color:#b30000;'>↺ LLM Feedback Loop Triggered → Proceeding to Correction Step</span>
-        </div>
-        """, unsafe_allow_html=True)
-
 
     # ---- Rule-based ----
     st.subheader("1) 🔎 Rule-Based Verification")
@@ -424,6 +412,17 @@ with st.expander("STEP 2 — Multi-Tiered Validation (Rule → RAG → Cosine �
             st.markdown(highlight_red(msg), unsafe_allow_html=True)
         else:
             st.markdown(highlight_green(msg), unsafe_allow_html=True)
+
+        # --------------------
+    # 📌 Feedback Loop Visual Indicator (insert here)
+    flagged = any("❗" in msg for stage in validation.values() for msg in stage)
+
+    if flagged:
+        st.markdown("...빨간 박스...")
+    else:
+        st.markdown("...초록 박스...")
+
+    # --------------------
 
     # ---- HITL Recommendation ----
     st.markdown("---")
