@@ -1,41 +1,66 @@
 import streamlit as st
+import pandas as pd
 
-st.title("Stroke Pipeline Demo (Enhanced Mock Version)")
-st.write("This demo simulates the extraction–validation–prediction workflow using three different example notes.")
+# 기본 설정
+st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
+st.title("Enhanced Stroke Pipeline Demo (Mock Version)")
+st.write("This demo simulates a multimodal extraction–validation–prediction pipeline using text and imaging sources.")
 
-# =========================
-# 0) Example Notes
-# =========================
-example_notes = {
-    "Example Note 1 (Clean Case)": """
-72-year-old male with history of hypertension.
-Presented with right arm weakness, onset 50 minutes ago.
-NIHSS measured as 6 by neurology resident.
-CT ASPECTS is reported as 9.
-""",
-    
-    "Example Note 2 (Incorrect ASPECTS)": """
-68-year-old female with diabetes mellitus.
-Presented with aphasia and left-sided weakness for 1 hour.
-NIHSS recorded as 12.
-CT ASPECTS documented as '19' in note (likely typo).
-Atrial fibrillation absent.
+# ======================================
+# 0) Example Inputs: Neurology Note, Radiology Report, ASPECTS Images
+# ======================================
+
+neurology_notes = {
+    "Example Case 1": """
+73F with history of hypertension, presented with slurred speech and right-sided weakness.
+Neurology exam: NIHSS = 6. Mild facial palsy, right arm drift.
 """,
 
-    "Example Note 3 (Missing Variables)": """
-75-year-old male presented with dysarthria.
-No past medical history listed.
-NIHSS reported as 5.
-ASPECTS not mentioned.
-Atrial fibrillation unknown.
+    "Example Case 2": """
+68F with diabetes mellitus presented with aphasia.
+NIHSS recorded as 12. Motor weakness in left arm. No AFib documented.
+""",
+
+    "Example Case 3": """
+75M with dysarthria. Past history unknown.
+NIHSS = 5. Unable to assess AFib due to incomplete history.
 """
 }
 
-# =========================
-# 1) Extraction Results (Mock)
-# =========================
+radiology_reports = {
+    "Example Case 1": """
+Non-contrast CT: ASPECTS = 9. No evidence of hemorrhage or LVO.
+""",
+
+    "Example Case 2": """
+CT ASPECTS documented as '19' in note (likely typo). No hemorrhage.
+""",
+
+    "Example Case 3": """
+ASPECTS not documented in CT report. MRI recommended for further evaluation.
+"""
+}
+
+# ← 반드시 /images 폴더에 넣어야 함
+aspect_images = {
+    "Example Case 1": "images/aspects1.png",
+    "Example Case 2": "images/aspects2.png",
+    "Example Case 3": "images/aspects3.png"
+}
+
+# Image-based ASPECTS Ground Truth
+aspect_ground_truth = {
+    "Example Case 1": 5,
+    "Example Case 2": 6,
+    "Example Case 3": 10
+}
+
+# ======================================
+# 1) Extraction Mock Output
+# ======================================
+
 extraction_results = {
-    "Example Note 1 (Clean Case)": {
+    "Example Case 1": {
         "NIHSS": 6,
         "Hypertension": "yes",
         "Diabetes": "no",
@@ -43,15 +68,15 @@ extraction_results = {
         "ASPECTS": 9
     },
 
-    "Example Note 2 (Incorrect ASPECTS)": {
+    "Example Case 2": {
         "NIHSS": 12,
         "Hypertension": "no",
         "Diabetes": "yes",
         "Atrial_Fibrillation": "no",
-        "ASPECTS": 19    # <- intentionally wrong
+        "ASPECTS": 19
     },
 
-    "Example Note 3 (Missing Variables)": {
+    "Example Case 3": {
         "NIHSS": 5,
         "Hypertension": "unknown",
         "Diabetes": "unknown",
@@ -60,90 +85,160 @@ extraction_results = {
     }
 }
 
-# =========================
-# 2) Validation Logic (Mock)
-# =========================
-def validate_data(selected_note):
-    extracted = extraction_results[selected_note]
+# ======================================
+# 2) Validation Function (Rule-Based, RAG, Cosine, HITL)
+# ======================================
+
+def validate_data(selected, extracted):
     val = {}
 
-    # Rule-based
-    rule_msg = []
-    if isinstance(extracted["ASPECTS"], int) and not (0 <= extracted["ASPECTS"] <= 10):
-        rule_msg.append("ASPECTS out of valid range (0–10).")
-    if extracted["NIHSS"] < 0 or extracted["NIHSS"] > 42:
-        rule_msg.append("NIHSS out of valid range (0–42).")
+    # --- Rule-based ----
+    rule_msgs = []
+
+    # ASPECTS Checks
     if extracted["ASPECTS"] == "missing":
-        rule_msg.append("ASPECTS missing from note.")
-    if not rule_msg:
-        rule_msg = ["No rule-based issues detected."]
-    
-    val["Rule-based"] = rule_msg
+        rule_msgs.append("❗ ASPECTS missing from extraction.")
+    elif isinstance(extracted["ASPECTS"], int) and (extracted["ASPECTS"] < 0 or extracted["ASPECTS"] > 10):
+        rule_msgs.append("❗ ASPECTS value out of expected range (0–10).")
 
-    # RAG Verification (mock)
-    if selected_note == "Example Note 2 (Incorrect ASPECTS)":
+    # NIHSS Checks
+    if extracted["NIHSS"] < 0 or extracted["NIHSS"] > 42:
+        rule_msgs.append("❗ NIHSS out of normal clinical range (0–42).")
+
+    if not rule_msgs:
+        rule_msgs.append("✔ No rule-based issues detected.")
+
+    val["Rule-based"] = rule_msgs
+
+    # --- RAG verification (Mock) ---
+    if selected == "Example Case 2":
         val["RAG"] = [
-            "Retrieved text: 'CT ASPECTS likely around 9 based on radiology context.'",
-            "Model suggestion: ASPECTS=9"
+            "Retrieved snippet: 'CT interpretation suggests ASPECTS ~6-9'.",
+            "Model suggestion: ASPECTS likely 6–9, not 19."
         ]
-    elif selected_note == "Example Note 3 (Missing Variables)":
+    elif selected == "Example Case 3":
         val["RAG"] = [
-            "Retrieved text: 'Past medical history not mentioned.'",
-            "Could not confirm hypertension/AFib."
+            "Retrieved snippet: 'ASPECTS not documented'.",
+            "Unable to confirm AFib/HTN from text."
         ]
     else:
-        val["RAG"] = ["Retrieved segments confirm all extracted values."]
+        val["RAG"] = [
+            "Retrieved segments confirm NIHSS, HTN, and ASPECTS values."
+        ]
 
-    # Cosine similarity flagging (mock)
-    if selected_note == "Example Note 2 (Incorrect ASPECTS)":
-        val["Flag"] = "FLAGGED (Similarity score = 0.42)"
-    elif selected_note == "Example Note 3 (Missing Variables)":
-        val["Flag"] = "FLAGGED (Low confidence: score = 0.38)"
+    # --- Cosine Similarity Flagging (Mock) ---
+    if selected == "Example Case 1":
+        val["Flag"] = "✔ Not flagged (similarity score = 0.92)"
+    elif selected == "Example Case 2":
+        val["Flag"] = "❗ FLAGGED (score = 0.42) – possible ASPECTS error"
     else:
-        val["Flag"] = "Not flagged (score = 0.91)"
+        val["Flag"] = "❗ FLAGGED (low confidence score = 0.38)"
 
-    # HITL
-    if selected_note == "Example Note 2 (Incorrect ASPECTS)":
-        val["HITL"] = "Reviewer corrected ASPECTS from 19 → 9."
-    elif selected_note == "Example Note 3 (Missing Variables)":
-        val["HITL"] = "Reviewer marked missing fields as 'unknown'."
+    # --- HITL Correction ---
+    if selected == "Example Case 2":
+        val["HITL"] = "Reviewer: corrected ASPECTS from 19 → 6."
+    elif selected == "Example Case 3":
+        val["HITL"] = "Reviewer: confirmed missing variables as 'unknown'."
     else:
-        val["HITL"] = "No corrections needed."
+        val["HITL"] = "No corrections required."
 
     return val
 
+# ======================================
+# UI Start
+# ======================================
 
-def final_prediction(selected_note):
-    if selected_note == "Example Note 1 (Clean Case)":
-        return 0.21
-    elif selected_note == "Example Note 2 (Incorrect ASPECTS)":
-        return 0.44
-    else:
-        return 0.33
+selected = st.selectbox("Select Example Case", list(neurology_notes.keys()))
 
+col1, col2, col3 = st.columns(3)
 
-# =========================
-# UI Starts Here
-# =========================
-selected_note = st.selectbox("Select an example patient note:", list(example_notes.keys()))
+with col1:
+    st.subheader("📝 Neurology Note")
+    st.text_area("Note", neurology_notes[selected], height=250)
 
-with st.expander("1. Clinical Note"):
-    st.text_area("Clinical Text", example_notes[selected_note], height=200)
+with col2:
+    st.subheader("🖼️ ASPECTS CT Image")
+    st.image(aspect_images[selected], caption=f"ASPECTS Ground Truth = {aspect_ground_truth[selected]}")
 
-with st.expander("2. Extraction Output (Mock)"):
-    st.json(extraction_results[selected_note])
+with col3:
+    st.subheader("📄 Radiology Report")
+    st.text_area("Radiology", radiology_reports[selected], height=250)
 
-with st.expander("3. Validation Steps (Mock)"):
-    results = validate_data(selected_note)
-    st.markdown("### Rule-based Validation")
-    st.write(results["Rule-based"])
-    st.markdown("### RAG Verification")
-    st.write(results["RAG"])
-    st.markdown("### Cosine Similarity Flagging")
+# ======================================
+# Extraction
+# ======================================
+
+st.markdown("---")
+with st.expander("1. Extraction Output (Mock)"):
+    extracted = extraction_results[selected]
+    st.json(extracted)
+    st.markdown(f"**ASPECTS from Image (Ground Truth):** {aspect_ground_truth[selected]}")
+
+# ======================================
+# Validation
+# ======================================
+
+with st.expander("2. Validation Steps"):
+    results = validate_data(selected, extracted)
+
+    st.markdown("### 🔎 Rule-based Validation")
+    for m in results["Rule-based"]:
+        st.write(m)
+
+    st.markdown("---")
+    st.markdown("### 📚 RAG Verification")
+    for m in results["RAG"]:
+        st.write("- " + m)
+
+    st.markdown("---")
+    st.markdown("### 📌 Vector Similarity (Cosine)")
     st.write(results["Flag"])
-    st.markdown("### Human-in-the-Loop Review")
+
+    st.markdown("---")
+    st.markdown("### 🧑‍⚕️ Human-in-the-loop Review")
     st.write(results["HITL"])
 
-with st.expander("4. Prediction (Mock)"):
-    prob = final_prediction(selected_note)
+    st.markdown("---")
+    st.markdown("### 🧩 Cross-check with ASPECTS Image")
+    true_score = aspect_ground_truth[selected]
+    if extracted["ASPECTS"] == true_score:
+        st.success("ASPECTS matches image-derived score.")
+    else:
+        st.error(f"Mismatch detected: Extracted={extracted['ASPECTS']} vs Image={true_score}")
+
+# ======================================
+# Prediction
+# ======================================
+
+with st.expander("3. Prediction (Mock)"):
+    if selected == "Example Case 1":
+        prob = 0.22
+    elif selected == "Example Case 2":
+        prob = 0.44
+    else:
+        prob = 0.33
+    
     st.metric("Predicted Poor Outcome Probability", f"{prob:.2f}")
+
+# ======================================
+# CSV Export
+# ======================================
+
+final_df = pd.DataFrame([{
+    "Case": selected,
+    "NIHSS": extracted["NIHSS"],
+    "Hypertension": extracted["Hypertension"],
+    "Diabetes": extracted["Diabetes"],
+    "Atrial_Fibrillation": extracted["Atrial_Fibrillation"],
+    "ASPECTS_Extracted": extracted["ASPECTS"],
+    "ASPECTS_Image_GT": true_score,
+    "Corrected_ASPECTS": results["HITL"],
+    "Poor_Outcome_Prob": prob
+}])
+
+st.download_button(
+    label="⬇️ Download Final Structured Data (CSV)",
+    data=final_df.to_csv(index=False),
+    mime="text/csv",
+    file_name=f"{selected}_structured_output.csv"
+)
