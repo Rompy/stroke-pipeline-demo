@@ -17,6 +17,7 @@ card_style = """
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.10);
     margin-bottom: 25px;
+    color: #000000;
 ">
 """
 
@@ -349,8 +350,7 @@ with st.expander("3. Prediction (Mock)"):
 
     st.metric("Predicted Poor Outcome Probability", f"{prob:.2f}")
 
-    fig = semicircular_gauge(prob)
-    st.pyplot(fig)
+    st.markdown("Prediction displayed numerically (gauge disabled).")
 
 # ============================================================
 # CSV Export
