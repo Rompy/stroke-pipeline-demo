@@ -554,14 +554,6 @@ with st.expander("STEP 4 — Prediction (Mock Model)"):
     else:
         prob = 0.10
 
-    # Gradient Risk Bar
-st.markdown(f"""
-<div style='height:22px;border-radius:12px;
-    background:linear-gradient(90deg, #ff6666 {prob*100}%, #e0e0e0 {prob*100}%);'>
-</div>
-<p style='font-size:17px;font-weight:600;'>{prob*100:.1f}% predicted poor outcome</p>
-""", unsafe_allow_html=True)
-
     st.metric("Predicted Poor Outcome Probability", f"{prob:.2f}")
     st.write("Prediction is based on corrected structured data.")
 
