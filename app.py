@@ -420,25 +420,39 @@ selected = st.selectbox("Select Example Case", list(neurology_notes.keys()))
 # Display Neurology Note / MRI / ASPECTS Images
 # =====================================================================
 
-col1, col2, col3 = st.columns([1.3, 1.3, 1])
-
+# Neurology Note
 with col1:
-    st.markdown(step_badge("Source Document 1"))
-    st.markdown(card_style + "<h3>📝 Neurology Note</h3>" +
-                neurology_notes[selected] + "</div>", unsafe_allow_html=True)
+    st.markdown(
+        card_style +
+        step_badge("Source Document 1") +
+        "<h3>📝 Neurology Note</h3>" +
+        neurology_notes[selected] +
+        "</div>",
+        unsafe_allow_html=True
+    )
 
+# Radiology Report
 with col2:
-    st.markdown(step_badge("Source Document 2"))
-    st.markdown(card_style + "<h3>📄 Radiology Report</h3>" +
-                radiology_reports[selected] + "</div>", unsafe_allow_html=True)
+    st.markdown(
+        card_style +
+        step_badge("Source Document 2") +
+        "<h3>📄 Radiology Report</h3>" +
+        radiology_reports[selected] +
+        "</div>",
+        unsafe_allow_html=True
+    )
 
+# ASPECT CT Image
 with col3:
-    st.markdown(step_badge("Source Document 3"))
-    st.markdown(card_style + "<h3>🖼️ ASPECT CT Image</h3>", unsafe_allow_html=True)
+    st.markdown(
+        card_style +
+        step_badge("Source Document 3") +
+        "<h3>🖼️ ASPECT CT Image</h3>",
+        unsafe_allow_html=True
+    )
     st.image(aspect_images[selected], use_column_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("---")
 
 
 # =====================================================================
