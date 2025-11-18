@@ -47,132 +47,26 @@ step_badge = lambda x: f"<div style='background:#0047AB;color:white;padding:6px 
 neurology_notes = {
     "Example Case 1":
     """
-**Demographics:**  
-67-year-old female  
-
-**Chief Complaint:**  
-Right-sided weakness and slurred speech  
-
-**Onset:**  
-August 25, 2018 at 21:40 (LKW 21:30)
-
-**Past Medical History:**  
-- Hypertension (poorly controlled)  
-- Diabetes mellitus  
-- Dyslipidemia  
-- No known atrial fibrillation  
-- No cardiovascular disease  
-- No prior CVA  
-- No malignancy  
-- No ESRD  
-
-**Social History:**  
-- Smoking 0.5 pack/day × 10 yrs  
-- Alcohol 2 drinks/day × 15 yrs  
-
-**Present Illness:**  
-Sudden right arm and leg weakness with dysarthria while at home.  
-Symptoms persisted and required assistance for ambulation.
-
-**Vitals:** BP 178/92, HR 84, RR 18, Temp 36.8°C  
-**Initial NIHSS:** 9  
-
-**Neurological Examination:**  
-- Mental: Alert, mild dysarthria  
-- Motor: RUE 3/5, RLE 3/5; LUE/LLE 5/5  
-- Sensory: Right-sided decreased light touch  
-- CN: Right facial droop  
-- Cerebellum: No ataxia  
-- Reflexes: Normal  
-
-**Treatment:**  
-IV tPA administered at 22:35 (0.9 mg/kg).  
-No intra-arterial intervention performed.
+A 68-year-old male with a history of poorly controlled hypertension and diabetes mellitus, but without atrial fibrillation, prior stroke, dyslipidemia, cardiovascular disease, malignancy, or ESRD, presented with sudden right-sided arm and leg weakness accompanied by slurred speech. The symptoms began at approximately 21:40 on August 25, 2018 (LKW 21:30) while he was at home, and the deficits persisted, requiring assistance for ambulation. He has a social history notable for smoking half a pack per day for 10 years and consuming approximately two alcoholic drinks daily for 15 years.
+On arrival, his vital signs were BP 178/92, HR 84, RR 18, and temperature 36.8°C. Neurologic exam showed mild dysarthria, right facial droop, 3/5 strength in the right upper and lower extremities, intact strength on the left, decreased light touch sensation on the right side, and no cerebellar ataxia. His initial NIHSS score was 9. There were no signs of seizure, head trauma, or altered mental status.
+Given the clear onset time and absence of contraindications, IV tPA was administered at 22:35 at a dose of 0.9 mg/kg. No mechanical thrombectomy or other intra-arterial procedures were performed.
 """,
 
     "Example Case 2":
     """
-**Demographics:**  
-73-year-old male  
-
-**Chief Complaint:**  
-Aphasia and left-sided heaviness  
-
-**Onset:**  
-September 3, 2018 at 19:10
-
-**Past Medical History:**  
-- Diabetes mellitus  
-- Hypertension  
-- Dyslipidemia  
-- Old silent lacunar infarct  
-- No AFib  
-- No malignancy  
-- No ESRD  
-- No cardiovascular disease  
-
-**Social History:**  
-- Non-smoker  
-- Occasional alcohol  
-
-**Present Illness:**  
-Expressive difficulty and left arm heaviness.  
-Symptoms fluctuated then persisted.
-
-**Vitals:** BP 162/88, HR 76, RR 18, Temp 37°C  
-**Initial NIHSS:** 5  
-
-**Neurological Examination:**  
-- Mental: Mild aphasia  
-- Motor: LUE 4+/5, LLE 4/5  
-- Sensory: Intact  
-- Cranial Nerves: Normal  
-- Cerebellum: Normal  
-
-**Treatment:**  
-No tPA administered.  
-No intra-arterial intervention.
-""",
+A 72-year-old female with a medical history of hypertension and diabetes mellitus, and without atrial fibrillation, dyslipidemia, cardiovascular disease, prior stroke, ESRD, or malignancy, presented with expressive aphasia and a sensation of heaviness in the left upper extremity. The symptoms began on September 3, 2018 at approximately 19:10. She denied smoking but reported occasional alcohol use.
+Her symptoms initially fluctuated but eventually persisted. On examination in the emergency department, her vital signs were BP 162/88, HR 76, RR 18, and temperature 37.0°C. Neurologic exam revealed mild aphasia, 4+/5 strength in the left upper extremity, 4/5 in the left lower extremity, intact sensation, and no cranial nerve or cerebellar abnormalities. Her initial NIHSS was calculated as 5.
+No IV tPA or intra-arterial intervention was performed due to clinical judgment and imaging findings. There was no loss of consciousness, seizure activity, or head trauma reported.
+"""
+,
 
     "Example Case 3":
     """
-**Demographics:**  
-62-year-old male  
-
-**Chief Complaint:**  
-Presyncope  
-
-**Onset:**  
-August 24, 2018 at 23:30
-
-**Past Medical History:**  
-- Hypertension  
-- Diabetes mellitus  
-- Treated pulmonary TB  
-- Chronic hepatitis B  
-- No AFib  
-- No cardiovascular disease  
-- No dyslipidemia  
-- No malignancy  
-- No ESRD  
-- No prior stroke  
-
-**Social History:**  
-- Smoking 0.5 pack/day × 10 yrs  
-- Alcohol 1–2 drinks/day × 20 yrs  
-
-**Present Illness:**  
-Dizziness, chills, transient bilateral leg weakness during activity (billiards).  
-
-**Vitals:** BP 211/90, HR 73, RR 20, Temp 36.7°C  
-**Initial NIHSS:** 0  
-
-**Neurological Examination:**  
-UE 5/5, LE 4+/5 bilaterally; CN intact; cerebellum intact; reflexes normal.
-
-**Treatment:**  
-No tPA, no IA intervention.
+A 63-year-old male with hypertension, diabetes mellitus, a remote history of treated pulmonary tuberculosis, and chronic hepatitis B, but without atrial fibrillation, dyslipidemia, ESRD, malignancy, cardiovascular disease, or previous stroke, presented after experiencing dizziness, chills, and transient bilateral leg weakness while playing billiards. The onset occurred at around 23:30 on August 24, 2018. His social history includes smoking half a pack per day for approximately 10 years and drinking one to two alcoholic beverages daily for about 20 years.
+Upon evaluation, his vital signs were notable for significantly elevated blood pressure at 211/90, with HR 73, RR 20, and temperature 36.7°C. Neurologic assessment demonstrated full strength (5/5) in both upper extremities and slightly reduced strength (4+/5) in both lower extremities, without cranial nerve deficits, cerebellar signs, or sensory impairment. His initial NIHSS score was 0.
+He did not receive IV tPA or undergo any intra-arterial intervention, given the absence of focal deficits consistent with acute large-vessel ischemia and imaging findings.
 """
+
 }
 
 # =====================================================================
