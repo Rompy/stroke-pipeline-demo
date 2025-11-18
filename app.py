@@ -460,18 +460,6 @@ with col3:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# ===============================================================
-# LLM PROCESSING PIPELINE (Container 시작)
-# ===============================================================
-
-st.markdown("")   # 🔥 중요 — HTML 렌더링 안정화
-st.markdown(
-    llm_container_style +
-    "<h2 style='color:#0047AB;margin-top:0;'>🤖 LLM Processing Pipeline</h2>",
-    unsafe_allow_html=True
-)
-
-
 # =====================================================================
 # STEP 1: Extraction Output
 # =====================================================================
@@ -551,14 +539,6 @@ with st.expander("STEP 3 — Corrected Structured Output (HITL-assisted)"):
         )
 
     st.json(corrected)
-
-# ===============================================================
-# LLM PROCESSING PIPELINE (Container 끝)
-# ===============================================================
-
-st.markdown("</div>", unsafe_allow_html=True)
-st.markdown("")   # 🔥 중요 — 닫힌 박스 다음 Reset
-
 
 # =====================================================================
 # STEP 4: Prediction (now based on corrected values)
