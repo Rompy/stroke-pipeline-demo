@@ -6,6 +6,7 @@ import datetime
 st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
 st.title("🧠 Stroke Pipeline Demo")
 st.write("A multimodal extraction–validation–correction–prediction pipeline for stroke outcome research.")
+st.write("⚠️ DISCLAIMER: This is a DEMO version using a lightweight/synthetic model for illustration purposes only. Performance shown here does NOT reflect the actual model performance reported in the manuscript.")
 
 # ===============================================================
 # CSS: Card-shaped UI + Highlight blocks
