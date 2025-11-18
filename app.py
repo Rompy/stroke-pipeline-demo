@@ -450,11 +450,14 @@ with col3:
     st.markdown(
         card_style +
         step_badge("Source Document 3") +
-        "<h3>🖼️ ASPECT CT Image</h3>" +
-        f"<img src='{aspect_images[selected]}' style='width:100%;border-radius:6px;margin-top:10px;'/>" +
-        "</div>",
+        "<h3>🖼️ ASPECT CT Image</h3>",
         unsafe_allow_html=True
     )
+
+    st.image(aspect_images[selected], use_column_width=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
