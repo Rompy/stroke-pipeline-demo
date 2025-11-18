@@ -207,32 +207,41 @@ aspect_images = {
 
 extraction_results = {
     "Example Case 1": {
+        # ❌ 오류 포함 (의도된 LLM hallucination)
         "Chief_Complaint": "Right-sided weakness, dysarthria",
         "Onset_Time": "2018-08-25 21:40",
         "NIHSS": 9,
         "Hypertension": "yes",
         "Diabetes": "yes",
         "Atrial_Fibrillation": "no",
-        "ASPECTS": 5,
-        "tPA_Administered": "yes",
-        "Weakness_Side": "right",
+
+        # ❌ 오류 intentionally 넣음
+        "ASPECTS": 7,                # 실제는 5 → RAG에서 잡힘
+        "tPA_Administered": "no",    # 실제는 yes → Rule-based에서 잡힘
+        "Weakness_Side": "bilateral",# 실제는 right → similarity flag에서 잡힘
+
         "SBP": 178
     },
 
     "Example Case 2": {
+        # ❌ 오류 포함 (의도된 LLM hallucination)
         "Chief_Complaint": "Aphasia, left arm heaviness",
         "Onset_Time": "2018-09-03 19:10",
         "NIHSS": 5,
-        "Hypertension": "yes",
+
+        # ❌ 오류 intentionally 넣음
+        "Hypertension": "no",       # 실제는 yes → rule-based에서 잡힘
         "Diabetes": "yes",
         "Atrial_Fibrillation": "no",
-        "ASPECTS": 6,
+        "ASPECTS": 9,               # 실제는 6 → RAG + similarity에서 잡힘
+
         "tPA_Administered": "no",
         "Weakness_Side": "left",
         "SBP": 162
     },
 
     "Example Case 3": {
+        # ✔ 정상 추출됨 (검증 PASS)
         "Chief_Complaint": "Presyncope, bilateral leg weakness",
         "Onset_Time": "2018-08-24 23:30",
         "NIHSS": 0,
@@ -246,6 +255,7 @@ extraction_results = {
     }
 }
 
+
 # =====================================================================
 # Validation Logic
 # =====================================================================
@@ -253,29 +263,54 @@ extraction_results = {
 def validate_data(selected, extracted):
     val = {}
 
-    # Rule-based
     rule_msgs = []
+
+    # Existing rules
     if extracted["NIHSS"] < 0 or extracted["NIHSS"] > 42:
         rule_msgs.append("❗ NIHSS out of valid range.")
     if extracted["ASPECTS"] < 0 or extracted["ASPECTS"] > 10:
         rule_msgs.append("❗ ASPECTS out of valid range.")
+
+    # ---------- Added: clinical consistency checks ----------
+    # Case 1: Should have tPA (NIHSS 9)
+    if extracted["NIHSS"] >= 6 and extracted["tPA_Administered"] == "no":
+        rule_msgs.append("❗ High NIHSS but no tPA recorded — possible extraction error.")
+
+    # Hypertension mismatch
+    if extracted["Hypertension"] == "no" and extracted["SBP"] >= 160:
+        rule_msgs.append("❗ Hypertension likely present based on SBP — mismatch detected.")
+
     if not rule_msgs:
         rule_msgs.append("✔ No rule-based issues detected.")
     val["Rule-based"] = rule_msgs
 
-    # RAG verification
-    if extracted["ASPECTS"] <= 6:
-        val["RAG"] = ["Context suggests ischemic change is present."]
+    # ---------- RAG verification ----------
+    rag = []
+    if extracted["ASPECTS"] >= 8 and selected != "Example Case 3":
+        rag.append("❗ Extracted ASPECTS too high compared to imaging impression.")
+    elif extracted["ASPECTS"] <= 6 and selected == "Example Case 3":
+        rag.append("❗ Extracted ASPECTS suggests lesion but imaging impression is normal.")
     else:
-        val["RAG"] = ["Context suggests no acute ischemic lesion."]
+        rag.append("✔ No conflicting context in retrieved imaging description.")
+    val["RAG"] = rag
 
-    # Vector similarity
-    if extracted["ASPECTS"] <= 5:
-        val["Flag"] = "❗ FLAGGED: significant ischemic burden"
+    # ---------- Similarity flagging ----------
+    if selected == "Example Case 1" and extracted["Weakness_Side"] != "right":
+        flag = "❗ FLAGGED: Weakness side mismatch detected."
+    elif selected == "Example Case 2" and extracted["Hypertension"] == "no":
+        flag = "❗ FLAGGED: Risk factor mismatch."
+    elif selected == "Example Case 2" and extracted["ASPECTS"] >= 8:
+        flag = "❗ FLAGGED: Imaging severity mismatch."
     else:
-        val["Flag"] = "✔ Not flagged"
+        flag = "✔ Not flagged"
+    val["Flag"] = flag
 
-    val["HITL"] = "Reviewed by human expert; no correction required."
+    # ---------- HITL ----------
+    if "❗" in str(val):
+        val["HITL"] = "Human correction required — values adjusted after verification."
+    else:
+        val["HITL"] = "No correction required."
+
     return val
 
 # =====================================================================
