@@ -443,13 +443,13 @@ else:
 
 
 
-    # ---- HITL Recommendation ----
-    st.markdown("---")
-    st.subheader("4) 🧑‍⚕️ HITL Review Recommendation")
-    if "❗" in validation["HITL"]:
-        st.markdown(highlight_red(validation["HITL"]), unsafe_allow_html=True)
-    else:
-        st.markdown(highlight_green(validation["HITL"]), unsafe_allow_html=True)
+# ---- HITL Recommendation ----
+st.markdown("---")
+st.subheader("4) 🧑‍⚕️ HITL Review Recommendation")
+if "❗" in validation["HITL"]:
+    st.markdown(highlight_red(validation["HITL"]), unsafe_allow_html=True)
+else:
+    st.markdown(highlight_green(validation["HITL"]), unsafe_allow_html=True)
 
 
 # =====================================================================
