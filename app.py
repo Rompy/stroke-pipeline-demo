@@ -39,18 +39,6 @@ card_style = """
 
 step_badge = lambda x: f"<div style='background:#0047AB;color:white;padding:6px 12px;border-radius:6px;display:inline-block;margin-bottom:10px;font-weight:600;'>{x}</div>"
 
-llm_container_style = """
-<div style="
-    background-color:#F5F8FF;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    margin-top:30px;
-    margin-bottom:30px;
-    border-left:8px solid #0047AB;
-">
-"""
-
 
 # =====================================================================
 # 0) Neurology Notes – ASPECT 5 / 6 / 10 (original detailed version)
