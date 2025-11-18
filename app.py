@@ -379,13 +379,25 @@ with st.expander("STEP 1 — Extraction Output (Mock, with intentional hallucina
 # =====================================================================
 
 with st.expander("STEP 2 — Multi-Tiered Validation (Rule → RAG → Cosine → HITL)"):
-
     validation = validate_data(
         selected,
         extracted,
         neurology_notes[selected],
         radiology_reports[selected]
     )
+
+    # 📌 Show LLM feedback loop trigger if flagged
+    flagged = any("❗" in msg for stage in validation.values() for msg in stage)
+
+    if flagged:
+        st.markdown("""
+        <div style='margin:12px 0;padding:10px 15px;
+            border-left:5px solid #d9534f;background:#fdecec;border-radius:6px;'>
+            <b>❗ Validation flagged inconsistencies</b><br>
+            <span style='color:#b30000;'>↺ LLM Feedback Loop Triggered → Proceeding to Correction Step</span>
+        </div>
+        """, unsafe_allow_html=True)
+
 
     # ---- Rule-based ----
     st.subheader("1) 🔎 Rule-Based Verification")
