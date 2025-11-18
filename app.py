@@ -418,25 +418,27 @@ with st.expander("STEP 2 — Multi-Tiered Validation (Rule → RAG → Cosine �
     flagged = any("❗" in msg for stage in validation.values() for msg in stage)
 
     if flagged:
-        st.markdown("""
-        <div style='margin:15px 0;padding:12px 16px;
-            border-left:6px solid #d9534f;background:#fdecec;border-radius:8px;'>
-            <b>❗ Validation flagged inconsistencies</b><br>
-            <span style='color:#b30000;font-size:15px;'>
-            ↺ LLM Feedback Loop Triggered → Proceeding to Correction Step
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("""
+    <div style='margin:15px 0;padding:12px 16px;
+        border-left:6px solid #d9534f;background:#fdecec;border-radius:8px;'>
+        <b style='color:#8B0000;font-size:15px;'>❗ Validation flagged inconsistencies</b><br>
+        <span style='color:#b30000;font-size:15px;'>
+        ↺ LLM Feedback Loop Triggered → Proceeding to Correction Step
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
     else:
-        st.markdown("""
-        <div style='margin:15px 0;padding:12px 16px;
-            border-left:6px solid #28a745;background:#e8f8f0;border-radius:8px;'>
-            <b>✔ All checks stable</b><br>
-            <span style='color:#1d7d46;font-size:15px;'>
-            No feedback loop triggered — auto-accept path active
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
+    st.markdown("""
+    <div style='margin:15px 0;padding:12px 16px;
+        border-left:6px solid #28a745;background:#e8f8f0;border-radius:8px;'>
+        <b style='color:#006400;font-size:15px;'>✔ All checks stable</b><br>
+        <span style='color:#1d7d46;font-size:15px;'>
+        No feedback loop triggered — auto-accept path active
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 
     # ---- HITL Recommendation ----
