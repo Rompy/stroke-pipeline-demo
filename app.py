@@ -544,7 +544,7 @@ with st.expander("STEP 3 — Corrected Structured Output (HITL-assisted)"):
 # STEP 4: Prediction (now based on corrected values)
 # =====================================================================
 
-st.markdown("<div class='step-card'><h3>STEP 4 — Prediction</h3>", unsafe_allow_html=True)
+with st.expander("STEP 4 — Prediction (Mock Model)"):
 
 if corrected["ASPECTS"] <= 5:
     prob = 0.55
