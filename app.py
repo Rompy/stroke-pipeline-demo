@@ -414,6 +414,7 @@ def hitl_correction(selected, extracted, validation):
 # =====================================================================
 
 selected = st.selectbox("Select Example Case", list(neurology_notes.keys()))
+col1, col2, col3 = st.columns([1.3, 1.3, 1])
 
 
 # =====================================================================
