@@ -415,9 +415,9 @@ with st.expander("STEP 2 — Multi-Tiered Validation (Rule → RAG → Cosine �
 
             # --------------------
     # 📌 Feedback Loop Visual Indicator
-    flagged = any("❗" in msg for stage in validation.values() for msg in stage)
+flagged = any("❗" in msg for stage in validation.values() for msg in stage)
 
-    if flagged:
+if flagged:
     st.markdown("""
     <div style='margin:15px 0;padding:12px 16px;
         border-left:6px solid #d9534f;background:#fdecec;border-radius:8px;'>
@@ -428,7 +428,7 @@ with st.expander("STEP 2 — Multi-Tiered Validation (Rule → RAG → Cosine �
     </div>
     """, unsafe_allow_html=True)
 
-    else:
+else:
     st.markdown("""
     <div style='margin:15px 0;padding:12px 16px;
         border-left:6px solid #28a745;background:#e8f8f0;border-radius:8px;'>
@@ -438,6 +438,8 @@ with st.expander("STEP 2 — Multi-Tiered Validation (Rule → RAG → Cosine �
         </span>
     </div>
     """, unsafe_allow_html=True)
+
+
 
 
 
