@@ -176,43 +176,63 @@ No tPA, no IA intervention.
 }
 
 # =====================================================================
-# Radiology Reports — MRI structured narrative
+# Radiology Reports – original detailed MRI text
 # =====================================================================
 
 radiology_reports = {
     "Example Case 1":
     """
 MRI BRAIN WITH AND WITHOUT CONTRAST
+Technique:
+Multiplanar, multisequence MRI of the brain including T1, T2, FLAIR, DWI/ADC, GRE/SWI, and post-contrast imaging. TOF MRA of the intracranial circulation was obtained.
 Findings:
-DWI shows restricted diffusion involving left insula and left operculum → acute infarction present.
-No hemorrhage on SWI. No mass effect.
+DWI shows restricted diffusion involving the left insula, left frontal operculum, and anterior parietal cortex, consistent with an acute infarction in the left MCA territory.
+ADC maps confirm low signal corresponding to areas of restricted diffusion.
+FLAIR demonstrates mild cortical swelling and subtle hyperintensity in the same regions, compatible with early ischemic change.
+No intracranial hemorrhage is noted on GRE/SWI.
+Major intracranial arteries: TOF MRA reveals decreased flow-related signal in the proximal left M2/M3 branches, without complete occlusion.
+No mass effect significant enough to shift midline; ventricles remain symmetric.
+Basal ganglia, thalami, brainstem, and cerebellum are preserved.
+No abnormal meningeal or parenchymal enhancement following contrast.
 Conclusion:
-Acute MCA territory infarction present.
+Findings consistent with acute ischemic infarction in the left MCA territory, with corresponding cortical restricted diffusion and early FLAIR changes. No hemorrhagic transformation.
 """,
 
     "Example Case 2":
     """
 MRI BRAIN WITHOUT CONTRAST
+Technique:
+Multiplanar, multisequence MRI including T1, T2, FLAIR, DWI/ADC, and SWI. TOF intracranial MRA performed.
 Findings:
-DWI shows punctate diffusion restriction in left basal ganglia → early ischemia.
-No hemorrhage. No definite large-vessel occlusion.
+DWI shows punctate to patchy areas of mildly increased signal in the left basal ganglia and parietal opercular regions, suspicious for early acute ischemia.
+ADC demonstrates subtle low-signal correlation but less pronounced than in established infarction.
+FLAIR shows faint cortical/subcortical hyperintensity without significant swelling.
+No hemorrhage on SWI.
+Intracranial vasculature: TOF MRA shows mild irregularity of the left M2 segment, without definite large-vessel occlusion.
+Ventricles, midline structures, posterior fossa appear normal.
+No mass lesion or abnormal enhancement.
 Conclusion:
-Early MCA ischemia present.
+MRI findings suggest early left MCA territory ischemia, with mild cortical diffusion restriction but no hemorrhage or large-vessel occlusion.
 """,
 
     "Example Case 3":
     """
 MRI BRAIN WITH AND WITHOUT CONTRAST
+Technique:
+Multiplanar T1, T2, FLAIR, DWI/ADC, GRE/SWI, and post-contrast sequences. 3D TOF MRA obtained.
 Findings:
-No diffusion restriction. No acute lesion identified.
+Parenchyma: No diffusion restriction. No areas of abnormal T2/FLAIR hyperintensity. Gray–white differentiation preserved.
+No hemorrhage on GRE/SWI.
+No mass lesion, midline shift, or extra-axial collection.
+Ventricular system normal in size and configuration.
+Posterior fossa (brainstem and cerebellum) unremarkable.
+Intracranial circulation: TOF MRA demonstrates normal flow-related signal in bilateral ICA, MCA, ACA, PCA territories. No stenosis or occlusion.
+Enhancement: No abnormal parenchymal or leptomeningeal enhancement.
+Paranasal sinuses/orbits normal.
 Conclusion:
-Normal MRI. No acute infarction.
+Normal MRI brain. No acute infarction or structural abnormality detected.
 """
 }
-
-# ===============================================================
-# ASPECTS Images
-# ===============================================================
 
 aspect_images = {
     "Example Case 1": "images/aspects1.png",
