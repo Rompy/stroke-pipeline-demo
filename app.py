@@ -260,80 +260,117 @@ extraction_results = {
 # Validation Logic
 # =====================================================================
 
-def validate_data(selected, extracted):
+# =====================================================================
+# Validation Logic – 논문 2.3.2 Multi-tiered Validation Framework
+# =====================================================================
+
+def validate_data(selected, extracted, note_text, radiology_text):
     val = {}
 
+    # ===============================================================
+    # 1. RULE-BASED VERIFICATION (format / range only)
+    # ===============================================================
     rule_msgs = []
-
-    # Existing rules
-    if extracted["NIHSS"] < 0 or extracted["NIHSS"] > 42:
-        rule_msgs.append("❗ NIHSS out of valid range.")
-    if extracted["ASPECTS"] < 0 or extracted["ASPECTS"] > 10:
-        rule_msgs.append("❗ ASPECTS out of valid range.")
-
-    # ---------- Added: clinical consistency checks ----------
-    # Case 1: Should have tPA (NIHSS 9)
-    if extracted["NIHSS"] >= 6 and extracted["tPA_Administered"] == "no":
-        rule_msgs.append("❗ High NIHSS but no tPA recorded — possible extraction error.")
-
-    # Hypertension mismatch
-    if extracted["Hypertension"] == "no" and extracted["SBP"] >= 160:
-        rule_msgs.append("❗ Hypertension likely present based on SBP — mismatch detected.")
-
+    
+    # binary check
+    binary_fields = ["Hypertension", "Diabetes", "Atrial_Fibrillation", "tPA_Administered"]
+    for field in binary_fields:
+        if extracted[field] not in ["yes", "no", "unknown"]:
+            rule_msgs.append(f"❗ {field} contains invalid value '{extracted[field]}'. Expected yes/no/unknown.")
+    
+    # NIHSS range
+    if not (0 <= extracted["NIHSS"] <= 42):
+        rule_msgs.append("❗ NIHSS is outside valid range (0–42).")
+        
+    # ASPECTS range
+    if not (0 <= extracted["ASPECTS"] <= 10):
+        rule_msgs.append("❗ ASPECTS is outside valid range (0–10).")
+    
+    # SBP physiological plausibility
+    if extracted["SBP"] < 40 or extracted["SBP"] > 300:
+        rule_msgs.append("❗ SBP value is physiologically implausible.")
+    
     if not rule_msgs:
-        rule_msgs.append("✔ No rule-based issues detected.")
-    val["Rule-based"] = rule_msgs
+        rule_msgs.append("✔ No format/range issues detected.")
+    
+    val["Rule-Based"] = rule_msgs
 
-    # ---------- RAG verification ----------
-    rag = []
-    if extracted["ASPECTS"] >= 8 and selected != "Example Case 3":
-        rag.append("❗ Extracted ASPECTS too high compared to imaging impression.")
-    elif extracted["ASPECTS"] <= 6 and selected == "Example Case 3":
-        rag.append("❗ Extracted ASPECTS suggests lesion but imaging impression is normal.")
-    else:
-        rag.append("✔ No conflicting context in retrieved imaging description.")
-    val["RAG"] = rag
 
-    # ---------- Similarity flagging ----------
-    if selected == "Example Case 1" and extracted["Weakness_Side"] != "right":
-        flag = "❗ FLAGGED: Weakness side mismatch detected."
-    elif selected == "Example Case 2" and extracted["Hypertension"] == "no":
-        flag = "❗ FLAGGED: Risk factor mismatch."
-    elif selected == "Example Case 2" and extracted["ASPECTS"] >= 8:
-        flag = "❗ FLAGGED: Imaging severity mismatch."
-    else:
-        flag = "✔ Not flagged"
-    val["Flag"] = flag
+    # ===============================================================
+    # 2. RAG VERIFICATION (semantic match vs original note)
+    # ===============================================================
+    rag_msgs = []
+    full_text = (note_text + " " + radiology_text).lower()
 
-    # ---------- HITL ----------
-    if "❗" in str(val):
-        val["HITL"] = "Human correction required — values adjusted after verification."
+    # CASE 1 tPA mismatch
+    if selected == "Example Case 1":
+        if "tpa" in full_text and extracted["tPA_Administered"] != "yes":
+            rag_msgs.append("❗ RAG: Original note indicates tPA was administered, but extraction says otherwise.")
+
+        if "right" in full_text and extracted["Weakness_Side"] != "right":
+            rag_msgs.append("❗ RAG: Weakness side mismatch vs original note.")
+
+        if "acute infarction" in full_text and extracted["ASPECTS"] > 7:
+            rag_msgs.append("❗ RAG: ASPECTS too high relative to MRI findings.")
+
+    # CASE 2 mismatch
+    if selected == "Example Case 2":
+        if "early" in full_text and extracted["ASPECTS"] >= 8:
+            rag_msgs.append("❗ RAG: ASPECTS inconsistent with 'early ischemic change' MRI description.")
+
+        if "bp" in full_text and extracted["Hypertension"] == "no" and extracted["SBP"] >= 160:
+            rag_msgs.append("❗ RAG: Hypertension mismatch relative to note context.")
+
+    if not rag_msgs:
+        rag_msgs.append("✔ RAG did not detect semantic inconsistencies.")
+
+    val["RAG"] = rag_msgs
+
+
+    # ===============================================================
+    # 3. COSINE SIMILARITY FLAGGING (population-level anomaly)
+    # ===============================================================
+    cos_msgs = []
+
+    # Mock similarity scores
+    if selected == "Example Case 1":
+        sim = 0.71  # anomaly
+    elif selected == "Example Case 2":
+        sim = 0.78  # anomaly
     else:
-        val["HITL"] = "No correction required."
+        sim = 0.92  # normal
+
+    if sim < 0.82:
+        cos_msgs.append(
+            f"❗ Cosine similarity = {sim:.2f} (<0.82). Pattern outlier detected relative to 200 validated historical records."
+        )
+        cos_msgs.append(
+            "   (Note: This does NOT perform clinical reasoning — it detects rare or atypical variable combinations.)"
+        )
+    else:
+        cos_msgs.append(f"✔ Cosine similarity = {sim:.2f} (within normal validated pattern).")
+
+    val["Cosine"] = cos_msgs
+
+
+    # ===============================================================
+    # 4. HITL REVIEW
+    # ===============================================================
+    flagged = any("❗" in msg for stage in val.values() for msg in stage)
+
+    if flagged:
+        val["HITL"] = (
+            "🔎 Record requires clinician review. "
+            "Automated steps detected issues via RAG or population-level inconsistency."
+        )
+    else:
+        val["HITL"] = (
+            "✔ No issues detected. Record eligible for automated acceptance "
+            "(HITL reviewer will still audit a random 10% of non-flagged cases)."
+        )
 
     return val
 
-# =====================================================================
-# Gauge chart (반원 게이지)
-# =====================================================================
-
-def semicircular_gauge(score):
-    fig, ax = plt.subplots(figsize=(4, 2.2), subplot_kw={'projection': 'polar'})
-    ax.set_theta_offset(np.pi)
-    ax.set_theta_direction(-1)
-
-    theta = np.linspace(0, np.pi, 200)
-    ax.plot(theta, [1]*200, color='#E0E0E0', linewidth=18)
-
-    score_angle = np.pi * score
-    ax.plot([score_angle, score_angle], [0, 1], color='#d62728', linewidth=4)
-
-    ax.set_yticklabels([])
-    ax.set_xticklabels([])
-    ax.set_ylim(0, 1)
-    ax.grid(False)
-
-    return fig
 
 # =====================================================================
 # UI 시작
@@ -373,25 +410,33 @@ with st.expander("1. Extraction Output (Mock)"):
 # Validation
 # ============================================================
 
-with st.expander("2. Validation Steps"):
-    results = validate_data(selected, extracted)
+with st.expander("2. Validation Steps (Based on Study Framework)"):
 
-    st.subheader("🔎 Rule-based Validation")
-    for m in results["Rule-based"]:
+    results = validate_data(
+        selected,
+        extracted,
+        neurology_notes[selected],
+        radiology_reports[selected]
+    )
+
+    st.subheader("1) 🔎 Rule-Based Verification (Format / Range)")
+    for m in results["Rule-Based"]:
         st.write(m)
 
     st.markdown("---")
-    st.subheader("📚 RAG Verification")
+    st.subheader("2) 📚 RAG Verification (Semantic Check vs Original Note)")
     for m in results["RAG"]:
-        st.write("- " + m)
+        st.write(m)
 
     st.markdown("---")
-    st.subheader("📌 Vector Similarity Flagging")
-    st.write(results["Flag"])
+    st.subheader("3) 📈 Cosine Similarity Flagging (Population-Level Pattern Check)")
+    for m in results["Cosine"]:
+        st.write(m)
 
     st.markdown("---")
-    st.subheader("🧑‍⚕️ Human-in-the-loop Review")
+    st.subheader("4) 🧑‍⚕️ Human-in-the-Loop Review")
     st.write(results["HITL"])
+
 
 # ============================================================
 # Prediction
