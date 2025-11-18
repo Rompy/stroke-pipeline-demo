@@ -563,7 +563,9 @@ with st.expander("STEP 3 — Corrected Structured Output (HITL-assisted)"):
     st.json(corrected)
 
 
-# LLM container 종료
+# ===============================================================
+# END of LLM PROCESSING PIPELINE
+# ===============================================================
 st.markdown("</div>", unsafe_allow_html=True)
 
 # =====================================================================
