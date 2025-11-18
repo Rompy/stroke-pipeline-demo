@@ -1,12 +1,6 @@
 import streamlit as st
 
-st.title("Stroke Pipeline Demo (Mock)")
-
-# Sidebar selection
-menu = st.sidebar.selectbox(
-    "Select Step",
-    ["Clinical Note", "Extraction", "Validation", "Prediction"]
-)
+st.title("Stroke Pipeline Demo (Step-by-Step Mock)")
 
 # Example data
 example_note = """
@@ -27,31 +21,38 @@ extracted_json = {
 }
 
 validation_steps = {
-    "Rule-based": "No abnormal values detected.",
-    "RAG Verification": "Retrieved segments support extracted values.",
-    "Cosine Flagging": "Score=0.91 → Not flagged.",
-    "HITL": "Reviewer validated all variables."
+    "Rule-based": "No abnormal values found.",
+    "RAG Verification": "Relevant retrieved segments confirm data.",
+    "Cosine Flagging": "Similarity score=0.91 (not flagged).",
+    "HITL": "Human reviewer confirms accuracy."
 }
 
 prediction_result = {
     "Poor_outcome_probability": 0.32
 }
 
-# Render based on selection
-if menu == "Clinical Note":
-    st.header("1. Clinical Note")
-    st.text_area("Note:", example_note, height=200)
+# -----------------------------
+# Step 1
+# -----------------------------
+with st.expander("1. Clinical Note"):
+    st.text_area("Input Note:", example_note, height=200)
 
-elif menu == "Extraction":
-    st.header("2. Extraction Result")
+# -----------------------------
+# Step 2
+# -----------------------------
+with st.expander("2. Extraction"):
     st.json(extracted_json)
 
-elif menu == "Validation":
-    st.header("3. Validation Steps")
+# -----------------------------
+# Step 3
+# -----------------------------
+with st.expander("3. Validation Steps"):
     for step, desc in validation_steps.items():
         st.markdown(f"### {step}")
         st.write(desc)
 
-elif menu == "Prediction":
-    st.header("4. Prediction Result")
-    st.metric("Poor Outcome Probability", f"{prediction_result['Poor_outcome_probability']:.2f}")
+# -----------------------------
+# Step 4
+# -----------------------------
+with st.expander("4. Prediction"):
+    st.metric(label="Predicted Poor Outcome Probability", value=f"{prediction_result['Poor_outcome_probability']:.2f}")
