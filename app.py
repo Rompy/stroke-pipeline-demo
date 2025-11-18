@@ -213,6 +213,19 @@ aspect_images = {
     "Example Case 3": "images/aspects3.png"
 }
 
+llm_container_style = """
+<div style="
+    background-color:#F5F8FF;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-top:30px;
+    margin-bottom:30px;
+    border-left:8px solid #0047AB;
+">
+"""
+
+
 # ===============================================================
 # LLM PROCESSING PIPELINE (Container 시작)
 # ===============================================================
