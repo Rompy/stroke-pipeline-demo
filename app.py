@@ -3,11 +3,11 @@ import pandas as pd
 
 # 기본 설정
 st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
-st.title("Stroke Pipeline Demo")
+st.title("Enhanced Stroke Pipeline Demo (Mock Version)")
 st.write("This demo simulates a multimodal extraction–validation–prediction pipeline using text and imaging sources.")
 
 # ======================================
-# 0) Example Inputs: Neurology Note, Radiology Report, ASPECTS Images
+# 0) Example Inputs: Neurology Note, Radiology Report, ASPECT Images
 # ======================================
 
 neurology_notes = {
@@ -28,27 +28,79 @@ NIHSS = 5. Unable to assess AFib due to incomplete history.
 }
 
 radiology_reports = {
-    "Example Case 1": """
-Non-contrast CT: ASPECTS = 9. No evidence of hemorrhage or LVO.
+    "Example Case 1":  # ASPECTS=5
+    """
+Clinical Information:
+
+Technique:
+Multiplane T1, T2 and inversion recovery imaging was obtained.
+Gradient imaging was acquired. Fine slice 3D imaging was performed.
+Time-of-Flight arterial imaging was obtained. 
+Multiplane post-contrast images were acquired.
+
+Findings:
+Acute ischemic changes involving the left middle cerebral artery (MCA) territory.
+Loss of gray–white differentiation is noted.
+Mild sulcal effacement and early cytotoxic edema are present.
+No intracranial hemorrhage is identified.
+
+Conclusion:
+Left MCA territory acute infarction.
 """,
 
-    "Example Case 2": """
-CT ASPECTS documented as '19' in note (likely typo). No hemorrhage.
+    "Example Case 2":  # ASPECTS=6
+    """
+Clinical Information:
+
+Technique:
+Multiplane T1, T2 and inversion recovery imaging was obtained.
+Gradient imaging was acquired. Fine slice 3D imaging was performed.
+Time-of-Flight arterial imaging was obtained.
+Multiplane post-contrast images were acquired.
+
+Findings:
+Subtle decreased attenuation noted in the right MCA territory,
+suggestive of early ischemic change.
+No hemorrhage is evident. No mass effect or midline shift.
+
+Conclusion:
+Findings compatible with early ischemic change (ASPECTS compatible ~6).
 """,
 
-    "Example Case 3": """
-ASPECTS not documented in CT report. MRI recommended for further evaluation.
+    "Example Case 3":  # ASPECTS=10
+    """
+Clinical Information:
+
+Technique:
+Multiplane T1, T2 and inversion recovery imaging was obtained.
+Gradient imaging was acquired. Fine slice 3D imaging was performed.
+Time-of-Flight arterial imaging was obtained.
+Multiplane post-contrast images were acquired.
+
+Findings:
+No intra or extra-axial mass lesion or collection is identified.
+The ventricles and sulcal spaces are within normal limits.
+The midline structures are normal with no midline shift.
+No abnormal gradient or diffusion signal is identified.
+
+No abnormal enhancement is seen. The dural venous sinuses enhance normally.
+The Time-of-Flight imaging is normal.
+The orbits, paranasal sinuses and mastoid air cells are clear.
+No bony abnormality is seen.
+
+Conclusion:
+Normal MRI Brain.
 """
 }
 
-# ← 반드시 /images 폴더에 넣어야 함
+# ← 반드시 /images 폴더에 이미지 파일이 있어야 함
 aspect_images = {
     "Example Case 1": "images/aspects1.png",
     "Example Case 2": "images/aspects2.png",
     "Example Case 3": "images/aspects3.png"
 }
 
-# Image-based ASPECTS Ground Truth
+# ASPECTS Image Ground Truth
 aspect_ground_truth = {
     "Example Case 1": 5,
     "Example Case 2": 6,
@@ -86,7 +138,7 @@ extraction_results = {
 }
 
 # ======================================
-# 2) Validation Function (Rule-Based, RAG, Cosine, HITL)
+# 2) Validation Function (Rule / RAG / Cosine / HITL)
 # ======================================
 
 def validate_data(selected, extracted):
@@ -113,7 +165,7 @@ def validate_data(selected, extracted):
     # --- RAG verification (Mock) ---
     if selected == "Example Case 2":
         val["RAG"] = [
-            "Retrieved snippet: 'CT interpretation suggests ASPECTS ~6-9'.",
+            "Retrieved snippet: 'CT interpretation suggests ASPECTS ~6–9'.",
             "Model suggestion: ASPECTS likely 6–9, not 19."
         ]
     elif selected == "Example Case 3":
@@ -152,16 +204,20 @@ selected = st.selectbox("Select Example Case", list(neurology_notes.keys()))
 
 col1, col2, col3 = st.columns(3)
 
+# Neurology Note
 with col1:
     st.subheader("📝 Neurology Note")
     st.text_area("Note", neurology_notes[selected], height=250)
 
+# ASPECTS Image
 with col2:
     st.subheader("🖼️ ASPECTS CT Image")
-    st.image(aspect_images[selected], caption=f"ASPECTS Ground Truth = {aspect_ground_truth[selected]}")
+    st.image(aspect_images[selected],
+             caption=f"ASPECTS Image Ground Truth = {aspect_ground_truth[selected]}")
 
+# Radiology Report
 with col3:
-    st.subheader("📄 Radiology Report")
+    st.subheader("📄 Radiology Report (MRI/CT)")
     st.text_area("Radiology", radiology_reports[selected], height=250)
 
 # ======================================
@@ -172,7 +228,7 @@ st.markdown("---")
 with st.expander("1. Extraction Output (Mock)"):
     extracted = extraction_results[selected]
     st.json(extracted)
-    st.markdown(f"**ASPECTS from Image (Ground Truth):** {aspect_ground_truth[selected]}")
+    st.markdown(f"**ASPECTS from Image (Ground Truth): {aspect_ground_truth[selected]}**")
 
 # ======================================
 # Validation
@@ -217,7 +273,7 @@ with st.expander("3. Prediction (Mock)"):
         prob = 0.44
     else:
         prob = 0.33
-    
+
     st.metric("Predicted Poor Outcome Probability", f"{prob:.2f}")
 
 # ======================================
@@ -232,7 +288,7 @@ final_df = pd.DataFrame([{
     "Atrial_Fibrillation": extracted["Atrial_Fibrillation"],
     "ASPECTS_Extracted": extracted["ASPECTS"],
     "ASPECTS_Image_GT": true_score,
-    "Corrected_ASPECTS": results["HITL"],
+    "HITL_Comment": results["HITL"],
     "Poor_Outcome_Prob": prob
 }])
 
@@ -242,3 +298,4 @@ st.download_button(
     mime="text/csv",
     file_name=f"{selected}_structured_output.csv"
 )
+
