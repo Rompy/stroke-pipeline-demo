@@ -362,7 +362,6 @@ def validate_data(selected, extracted, note_text, radiology_text):
     if flagged:
         val["HITL"] = (
             "🔎 Record requires clinician review (flagged by RAG or similarity). "
-            "This is the only step where clinical reasoning is performed."
         )
     else:
         val["HITL"] = (
