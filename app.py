@@ -1,242 +1,297 @@
 import streamlit as st
 import pandas as pd
 
-# 기본 설정
 st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
-st.title("Enhanced Stroke Pipeline Demo (Mock Version)")
-st.write("This demo simulates a multimodal extraction–validation–prediction pipeline using text and imaging sources.")
+st.title("Stroke Pipeline Demo (Enhanced Mock Version)")
+st.write("Multimodal extraction–validation–prediction pipeline using text and imaging sources (Mock).")
 
-# ======================================
-# 0) Example Inputs: Neurology Note, Radiology Report, ASPECT Images
-# ======================================
+# ============================================================
+# 0) Neurology Notes (ASPECT 5 / 6 / 10 완전 재작성)
+# ============================================================
 
 neurology_notes = {
-    "Example Case 1": """
-73F with history of hypertension, presented with slurred speech and right-sided weakness.
-Neurology exam: NIHSS = 6. Mild facial palsy, right arm drift.
+    "Example Case 1":  # ASPECTS = 5, tPA administered
+    """
+**Chief Complaint:**  
+Right-sided weakness and slurred speech  
+
+**Onset:**  
+August 25, 2018 at 21:40 (LKW 21:30)
+
+**Past Medical History:**  
+- Hypertension (poorly controlled)  
+- Diabetes mellitus  
+- No known atrial fibrillation  
+- No prior stroke  
+
+**Social History:**  
+- Smoking 0.5 pack/day × 10 yrs  
+- Alcohol 2 drinks/day × 15 yrs  
+
+**Present Illness:**  
+The patient developed sudden right arm and leg weakness with dysarthria while at home.  
+Symptoms were abrupt and persistent.  
+Required assistance for ambulation.  
+No LOC or seizure activity.
+
+**Vital Signs on Arrival:** BP 178/92, HR 84, RR 18, Temp 36.8°C  
+**Initial NIHSS:** 9  
+
+**Neurological Examination:**  
+- Mental Status: Alert, mildly dysarthric  
+- CN: Right facial droop, pupils normal  
+- Motor: RUE 3/5, RLE 3/5; LUE/LLE 5/5  
+- Sensory: Decreased light touch on right side  
+- Cerebellum: No ataxia on left  
+- Reflexes: Normal, no Babinski  
+
+**Imaging Impression:**  
+Non-contrast CT: Early ischemic changes in left MCA territory.  
+**ASPECTS ≈ 5**
+
+**Treatment:**  
+IV tPA administered at 22:35 (0.9 mg/kg).
 """,
 
-    "Example Case 2": """
-68F with diabetes mellitus presented with aphasia.
-NIHSS recorded as 12. Motor weakness in left arm. No AFib documented.
+    "Example Case 2":  # ASPECTS = 6
+    """
+**Chief Complaint:**  
+Aphasia and left-sided heaviness  
+
+**Onset:**  
+September 3, 2018 at 19:10
+
+**Past Medical History:**  
+- Diabetes mellitus  
+- Hypertension  
+- No AFib  
+- No prior stroke  
+
+**Social History:**  
+- Non-smoker  
+- Occasional alcohol use  
+
+**Present Illness:**  
+Patient developed difficulty expressing words and mild left arm heaviness.  
+Symptoms fluctuated initially but became more noticeable.  
+No headache or seizure-like activity.
+
+**Vital Signs on Arrival:** BP 162/88, HR 76, RR 18, Temp 37.0°C  
+**Initial NIHSS:** 5  
+
+**Neurological Examination:**  
+- Mental Status: Alert, mildly aphasic  
+- CN: No gaze deviation  
+- Motor: LUE 4+/5, LLE 4/5; Right side 5/5  
+- Sensory: Intact bilaterally  
+- Cerebellum: Intact  
+- Reflexes: Normal  
+
+**Imaging Impression:**  
+CT: Subtle decreased attenuation in right MCA territory.  
+**ASPECTS ≈ 6**
 """,
 
-    "Example Case 3": """
-75M with dysarthria. Past history unknown.
-NIHSS = 5. Unable to assess AFib due to incomplete history.
+    "Example Case 3":  # ASPECTS = 10 (normal brain)
+    """
+**Chief Complaint:**  
+Presyncope  
+
+**Onset:**  
+August 24, 2018 at 23:30
+
+**Past Medical History:**  
+- Hypertension  
+- Diabetes mellitus  
+- Treated pulmonary tuberculosis  
+- Chronic hepatitis B  
+- No regular medications  
+
+**Social History:**  
+- Smoking 0.5 pack/day × 10 yrs  
+- Alcohol 1–2 drinks/day × 20 yrs  
+
+**Present Illness:**  
+While playing billiards, the patient experienced dizziness, chills, and transient bilateral leg weakness.  
+No clear unilateral symptoms.  
+ADL baseline intact.
+
+**Vital Signs on Arrival:** BP 211/90, HR 73, RR 20, Temp 36.7°C  
+**Initial NIHSS:** 0  
+
+**Neurological Examination:**  
+- Mental Status: Alert  
+- CN: Normal  
+- Motor: UE 5/5; LE 4+/5 bilaterally  
+- Sensory: Intact  
+- Cerebellum: FTN/HTS intact  
+- Reflexes: No pathologic signs  
+
+**Imaging Impression:**  
+CT brain: No acute lesion, no hemorrhage.  
+**ASPECTS = 10**
 """
 }
+
+# ============================================================
+# Radiology Reports (이미 제공된 내용 유지, 케이스별 차등)
+# ============================================================
 
 radiology_reports = {
-    "Example Case 1":  # ASPECTS=5
+    "Example Case 1":  # ASPECTS 5
     """
-Clinical Information:
-
-Technique:
-Multiplane T1, T2 and inversion recovery imaging was obtained.
-Gradient imaging was acquired. Fine slice 3D imaging was performed.
-Time-of-Flight arterial imaging was obtained. 
-Multiplane post-contrast images were acquired.
+CT/MRI REPORT:
 
 Findings:
-Acute ischemic changes involving the left middle cerebral artery (MCA) territory.
-Loss of gray–white differentiation is noted.
-Mild sulcal effacement and early cytotoxic edema are present.
-No intracranial hemorrhage is identified.
+Acute ischemic changes involving the left MCA territory.
+Loss of gray–white differentiation and mild sulcal effacement noted.
+No intracranial hemorrhage.
 
 Conclusion:
-Left MCA territory acute infarction.
+Left MCA territory acute infarction (ASPECTS ~5).
 """,
 
-    "Example Case 2":  # ASPECTS=6
+    "Example Case 2":  # ASPECTS 6
     """
-Clinical Information:
-
-Technique:
-Multiplane T1, T2 and inversion recovery imaging was obtained.
-Gradient imaging was acquired. Fine slice 3D imaging was performed.
-Time-of-Flight arterial imaging was obtained.
-Multiplane post-contrast images were acquired.
+CT/MRI REPORT:
 
 Findings:
-Subtle decreased attenuation noted in the right MCA territory,
-suggestive of early ischemic change.
-No hemorrhage is evident. No mass effect or midline shift.
+Subtle decreased attenuation in the right MCA territory.
+No hemorrhage. No significant mass effect.
 
 Conclusion:
-Findings compatible with early ischemic change (ASPECTS compatible ~6).
+Findings compatible with early ischemic change (ASPECTS ~6).
 """,
 
-    "Example Case 3":  # ASPECTS=10
+    "Example Case 3":  # ASPECTS 10
     """
-Clinical Information:
-
-Technique:
-Multiplane T1, T2 and inversion recovery imaging was obtained.
-Gradient imaging was acquired. Fine slice 3D imaging was performed.
-Time-of-Flight arterial imaging was obtained.
-Multiplane post-contrast images were acquired.
+CT/MRI REPORT:
 
 Findings:
-No intra or extra-axial mass lesion or collection is identified.
-The ventricles and sulcal spaces are within normal limits.
-The midline structures are normal with no midline shift.
-No abnormal gradient or diffusion signal is identified.
-
-No abnormal enhancement is seen. The dural venous sinuses enhance normally.
-The Time-of-Flight imaging is normal.
-The orbits, paranasal sinuses and mastoid air cells are clear.
-No bony abnormality is seen.
+No intra- or extra-axial mass lesion.
+Ventricles and sulci within normal limits.
+No abnormal diffusion or gradient signal.
+TOF normal.
 
 Conclusion:
-Normal MRI Brain.
+Normal MRI brain (ASPECTS 10).
 """
 }
 
-# ← 반드시 /images 폴더에 이미지 파일이 있어야 함
-aspect_images = {
-    "Example Case 1": "images/aspects1.png",
-    "Example Case 2": "images/aspects2.png",
-    "Example Case 3": "images/aspects3.png"
-}
-
-# ASPECTS Image Ground Truth
-aspect_ground_truth = {
-    "Example Case 1": 5,
-    "Example Case 2": 6,
-    "Example Case 3": 10
-}
-
-# ======================================
-# 1) Extraction Mock Output
-# ======================================
+# ============================================================
+# Extraction Results (변수 정비: 논문 기반 변수)
+# ============================================================
 
 extraction_results = {
     "Example Case 1": {
-        "NIHSS": 6,
+        "Chief_Complaint": "Right-sided weakness, dysarthria",
+        "Onset_Time": "2018-08-25 21:40",
+        "NIHSS": 9,
         "Hypertension": "yes",
-        "Diabetes": "no",
+        "Diabetes": "yes",
         "Atrial_Fibrillation": "no",
-        "ASPECTS": 9
+        "ASPECTS": 5,
+        "tPA_Administered": "yes",
+        "Weakness_Side": "right",
+        "SBP": 178
     },
 
     "Example Case 2": {
-        "NIHSS": 12,
-        "Hypertension": "no",
+        "Chief_Complaint": "Aphasia, left arm heaviness",
+        "Onset_Time": "2018-09-03 19:10",
+        "NIHSS": 5,
+        "Hypertension": "yes",
         "Diabetes": "yes",
         "Atrial_Fibrillation": "no",
-        "ASPECTS": 19
+        "ASPECTS": 6,
+        "tPA_Administered": "no",
+        "Weakness_Side": "left",
+        "SBP": 162
     },
 
     "Example Case 3": {
-        "NIHSS": 5,
-        "Hypertension": "unknown",
-        "Diabetes": "unknown",
-        "Atrial_Fibrillation": "unknown",
-        "ASPECTS": "missing"
+        "Chief_Complaint": "Presyncope with bilateral leg weakness",
+        "Onset_Time": "2018-08-24 23:30",
+        "NIHSS": 0,
+        "Hypertension": "yes",
+        "Diabetes": "yes",
+        "Atrial_Fibrillation": "no",
+        "ASPECTS": 10,
+        "tPA_Administered": "no",
+        "Weakness_Side": "bilateral",
+        "SBP": 211
     }
 }
 
-# ======================================
-# 2) Validation Function (Rule / RAG / Cosine / HITL)
-# ======================================
+# ============================================================
+# Validation Logic (Ground truth 비교 제거)
+# ============================================================
 
 def validate_data(selected, extracted):
     val = {}
 
-    # --- Rule-based ----
+    # Rule-based
     rule_msgs = []
-
-    # ASPECTS Checks
-    if extracted["ASPECTS"] == "missing":
-        rule_msgs.append("❗ ASPECTS missing from extraction.")
-    elif isinstance(extracted["ASPECTS"], int) and (extracted["ASPECTS"] < 0 or extracted["ASPECTS"] > 10):
-        rule_msgs.append("❗ ASPECTS value out of expected range (0–10).")
-
-    # NIHSS Checks
     if extracted["NIHSS"] < 0 or extracted["NIHSS"] > 42:
-        rule_msgs.append("❗ NIHSS out of normal clinical range (0–42).")
-
+        rule_msgs.append("❗ NIHSS out of valid range.")
+    if extracted["ASPECTS"] < 0 or extracted["ASPECTS"] > 10:
+        rule_msgs.append("❗ ASPECTS out of valid clinical range.")
     if not rule_msgs:
         rule_msgs.append("✔ No rule-based issues detected.")
-
     val["Rule-based"] = rule_msgs
 
-    # --- RAG verification (Mock) ---
-    if selected == "Example Case 2":
-        val["RAG"] = [
-            "Retrieved snippet: 'CT interpretation suggests ASPECTS ~6–9'.",
-            "Model suggestion: ASPECTS likely 6–9, not 19."
-        ]
-    elif selected == "Example Case 3":
-        val["RAG"] = [
-            "Retrieved snippet: 'ASPECTS not documented'.",
-            "Unable to confirm AFib/HTN from text."
-        ]
+    # RAG Verification (Mock)
+    if extracted["ASPECTS"] <= 6:
+        val["RAG"] = ["Retrieved context suggests ischemic change is present."]
+    elif extracted["ASPECTS"] == 10:
+        val["RAG"] = ["Retrieved context supports normal imaging findings."]
     else:
-        val["RAG"] = [
-            "Retrieved segments confirm NIHSS, HTN, and ASPECTS values."
-        ]
+        val["RAG"] = ["No conflicting context detected."]
 
-    # --- Cosine Similarity Flagging (Mock) ---
-    if selected == "Example Case 1":
-        val["Flag"] = "✔ Not flagged (similarity score = 0.92)"
-    elif selected == "Example Case 2":
-        val["Flag"] = "❗ FLAGGED (score = 0.42) – possible ASPECTS error"
+    # Cosine Similarity Flagging (Mock)
+    if extracted["ASPECTS"] <= 5:
+        val["Flag"] = "❗ FLAGGED: severe change detected"
     else:
-        val["Flag"] = "❗ FLAGGED (low confidence score = 0.38)"
+        val["Flag"] = "✔ Not flagged"
 
-    # --- HITL Correction ---
-    if selected == "Example Case 2":
-        val["HITL"] = "Reviewer: corrected ASPECTS from 19 → 6."
-    elif selected == "Example Case 3":
-        val["HITL"] = "Reviewer: confirmed missing variables as 'unknown'."
-    else:
-        val["HITL"] = "No corrections required."
+    # HITL (Mock)
+    val["HITL"] = "Values reviewed manually; no correction required."
 
     return val
 
-# ======================================
-# UI Start
-# ======================================
+
+# ============================================================
+# UI 시작
+# ============================================================
 
 selected = st.selectbox("Select Example Case", list(neurology_notes.keys()))
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
-# Neurology Note
 with col1:
     st.subheader("📝 Neurology Note")
-    st.text_area("Note", neurology_notes[selected], height=250)
+    st.markdown(neurology_notes[selected])
 
-# ASPECTS Image
 with col2:
-    st.subheader("🖼️ ASPECTS CT Image")
-    st.image(aspect_images[selected],
-             caption=f"ASPECTS Image Ground Truth = {aspect_ground_truth[selected]}")
-
-# Radiology Report
-with col3:
-    st.subheader("📄 Radiology Report (MRI/CT)")
-    st.text_area("Radiology", radiology_reports[selected], height=250)
-
-# ======================================
-# Extraction
-# ======================================
+    st.subheader("📄 Radiology Report")
+    st.markdown(radiology_reports[selected])
 
 st.markdown("---")
+
+# ============================================================
+# Extraction
+# ============================================================
+
 with st.expander("1. Extraction Output (Mock)"):
     extracted = extraction_results[selected]
     st.json(extracted)
-    st.markdown(f"**ASPECTS from Image (Ground Truth): {aspect_ground_truth[selected]}**")
 
-# ======================================
+# ============================================================
 # Validation
-# ======================================
+# ============================================================
 
 with st.expander("2. Validation Steps"):
     results = validate_data(selected, extracted)
-
     st.markdown("### 🔎 Rule-based Validation")
     for m in results["Rule-based"]:
         st.write(m)
@@ -247,49 +302,33 @@ with st.expander("2. Validation Steps"):
         st.write("- " + m)
 
     st.markdown("---")
-    st.markdown("### 📌 Vector Similarity (Cosine)")
+    st.markdown("### 📌 Vector Similarity")
     st.write(results["Flag"])
 
     st.markdown("---")
     st.markdown("### 🧑‍⚕️ Human-in-the-loop Review")
     st.write(results["HITL"])
 
-    st.markdown("---")
-    st.markdown("### 🧩 Cross-check with ASPECTS Image")
-    true_score = aspect_ground_truth[selected]
-    if extracted["ASPECTS"] == true_score:
-        st.success("ASPECTS matches image-derived score.")
-    else:
-        st.error(f"Mismatch detected: Extracted={extracted['ASPECTS']} vs Image={true_score}")
-
-# ======================================
+# ============================================================
 # Prediction
-# ======================================
+# ============================================================
 
 with st.expander("3. Prediction (Mock)"):
-    if selected == "Example Case 1":
-        prob = 0.22
-    elif selected == "Example Case 2":
-        prob = 0.44
+    if extracted["ASPECTS"] <= 5:
+        prob = 0.55
+    elif extracted["ASPECTS"] <= 7:
+        prob = 0.32
     else:
-        prob = 0.33
-
+        prob = 0.10
     st.metric("Predicted Poor Outcome Probability", f"{prob:.2f}")
 
-# ======================================
+# ============================================================
 # CSV Export
-# ======================================
+# ============================================================
 
 final_df = pd.DataFrame([{
-    "Case": selected,
-    "NIHSS": extracted["NIHSS"],
-    "Hypertension": extracted["Hypertension"],
-    "Diabetes": extracted["Diabetes"],
-    "Atrial_Fibrillation": extracted["Atrial_Fibrillation"],
-    "ASPECTS_Extracted": extracted["ASPECTS"],
-    "ASPECTS_Image_GT": true_score,
-    "HITL_Comment": results["HITL"],
-    "Poor_Outcome_Prob": prob
+    **extracted,
+    "Predicted_Poor_Outcome_Probability": prob
 }])
 
 st.download_button(
