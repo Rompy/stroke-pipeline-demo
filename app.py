@@ -546,14 +546,15 @@ with st.expander("STEP 3 — Corrected Structured Output (HITL-assisted)"):
 
 with st.expander("STEP 4 — Prediction (Mock Model)"):
 
-if corrected["ASPECTS"] <= 5:
-    prob = 0.55
-elif corrected["ASPECTS"] <= 7:
-    prob = 0.32
-else:
-    prob = 0.10
+    # prediction uses corrected ASPECTS
+    if corrected["ASPECTS"] <= 5:
+        prob = 0.55
+    elif corrected["ASPECTS"] <= 7:
+        prob = 0.32
+    else:
+        prob = 0.10
 
-# Gradient Risk Bar
+    # Gradient Risk Bar
 st.markdown(f"""
 <div style='height:22px;border-radius:12px;
     background:linear-gradient(90deg, #ff6666 {prob*100}%, #e0e0e0 {prob*100}%);'>
@@ -561,7 +562,9 @@ st.markdown(f"""
 <p style='font-size:17px;font-weight:600;'>{prob*100:.1f}% predicted poor outcome</p>
 """, unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
+    st.metric("Predicted Poor Outcome Probability", f"{prob:.2f}")
+    st.write("Prediction is based on corrected structured data.")
+
 
 # =====================================================================
 # STEP 5: CSV Export
