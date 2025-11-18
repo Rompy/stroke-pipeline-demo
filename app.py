@@ -3,7 +3,7 @@ import pandas as pd
 
 # 기본 설정
 st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
-st.title("Enhanced Stroke Pipeline Demo (Mock Version)")
+st.title("Stroke Pipeline Demo")
 st.write("This demo simulates a multimodal extraction–validation–prediction pipeline using text and imaging sources.")
 
 # ======================================
