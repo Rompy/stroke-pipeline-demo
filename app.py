@@ -8,37 +8,25 @@ st.title("🧠 Stroke Pipeline Demo")
 st.write("A multimodal extraction–validation–correction–prediction pipeline for stroke outcome research.")
 
 # ===============================================================
-# GLOBAL CSS (Improved Modern UI)
+# CSS: Card-shaped UI + Highlight blocks
 # ===============================================================
 
-st.markdown("""
-<style>
-.step-card {
-    background: #ffffff;
-    padding: 20px 25px;
-    border-radius: 12px;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-    margin-top: 15px;
-    border-left: 8px solid #0047AB;
-}
-.section-header {
-    padding: 10px 15px;
-    background: #0047AB;
-    color: white;
-    border-radius: 8px;
-    margin-top: 35px;
-}
-</style>
-""", unsafe_allow_html=True)
+def highlight_red(text):
+    return f"""
+    <div style='background-color:#ffe6e6;padding:10px;border-radius:8px;
+                border-left:6px solid #ff4d4d;margin-bottom:10px;'>
+        <span style='color:#b30000;font-weight:600;'>{text}</span>
+    </div>
+    """
 
-# Highlight blocks
-def h_red(m): 
-    return f"<div style='color:#b30000;font-weight:600;margin-bottom:6px;'>❗ {m}</div>"
+def highlight_green(text):
+    return f"""
+    <div style='background-color:#e8ffe6;padding:10px;border-radius:8px;
+                border-left:6px solid #00b33c;margin-bottom:10px;'>
+        <span style='color:#006622;font-weight:600;'>{text}</span>
+    </div>
+    """
 
-def h_green(m): 
-    return f"<div style='color:#006622;font-weight:600;margin-bottom:6px;'>✔ {m}</div>"
-
-# Simple card for Source documents
 card_style = """
 <div style="
     background-color:#ffffff;
@@ -50,32 +38,6 @@ card_style = """
 """
 
 step_badge = lambda x: f"<div style='background:#0047AB;color:white;padding:6px 12px;border-radius:6px;display:inline-block;margin-bottom:10px;font-weight:600;'>{x}</div>"
-
-# ===============================================================
-# FLOW VISUALIZATION — Pipeline Overview
-# ===============================================================
-
-st.markdown("""
-<div style='display:flex;justify-content:space-between;margin:30px 0 20px 0;'>
-    <div style="background:#e7f0ff;padding:14px 22px;border-radius:10px;border-left:6px solid #0047AB;width:22%;text-align:center;">
-        <b>1. Extraction</b>
-    </div>
-    <div style="background:#e7f0ff;padding:14px 22px;border-radius:10px;border-left:6px solid #0047AB;width:22%;text-align:center;">
-        <b>2. Validation</b>
-    </div>
-    <div style="background:#e7f0ff;padding:14px 22px;border-radius:10px;border-left:6px solid #0047AB;width:22%;text-align:center;">
-        <b>3. Correction</b>
-    </div>
-    <div style="background:#e7f0ff;padding:14px 22px;border-radius:10px;border-left:6px solid #0047AB;width:22%;text-align:center;">
-        <b>4. Prediction</b>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-
-# =====================================================================
-# SOURCE DOCUMENTS (Neurology Note, MRI, ASPECTS)
-# =====================================================================
 
 
 # =====================================================================
@@ -448,6 +410,7 @@ def hitl_correction(selected, extracted, validation):
 
     return corrected, True
 
+
 # =====================================================================
 # UI START
 # =====================================================================
@@ -460,24 +423,31 @@ col1, col2, col3 = st.columns([1.3, 1.3, 1])
 # Display Neurology Note / MRI / ASPECTS Images
 # =====================================================================
 
+# Neurology Note
 with col1:
     st.markdown(
         card_style +
         step_badge("Source Document 1") +
         "<h3>📝 Neurology Note</h3>" +
         neurology_notes[selected] +
-        "</div>", unsafe_allow_html=True
+        "</div>",
+        unsafe_allow_html=True
     )
 
+
+# Radiology Report
 with col2:
     st.markdown(
         card_style +
         step_badge("Source Document 2") +
         "<h3>📄 Radiology Report</h3>" +
         radiology_reports[selected] +
-        "</div>", unsafe_allow_html=True
+        "</div>",
+        unsafe_allow_html=True
     )
 
+
+# ASPECT CT Image
 with col3:
     st.markdown(
         card_style +
@@ -485,81 +455,93 @@ with col3:
         "<h3>🖼️ ASPECT CT Image</h3>",
         unsafe_allow_html=True
     )
+
     st.image(aspect_images[selected], use_column_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
 
 # =====================================================================
-# STEP 1 — Extraction
+# STEP 1: Extraction Output
 # =====================================================================
 
-st.markdown("<div class='step-card'><h3>STEP 1 — Extraction Output (Mock)</h3>", unsafe_allow_html=True)
-extracted = extraction_results[selected]
-st.json(extracted)
-st.markdown("</div>", unsafe_allow_html=True)
+with st.expander("STEP 1 — Extraction Output (Mock)"):
+    extracted = extraction_results[selected]
+    st.json(extracted)
 
 
 # =====================================================================
-# STEP 2 — Validation (Rule → RAG → Cosine → HITL)
+# STEP 2: Validation (Multi-tiered Framework)
 # =====================================================================
 
-st.markdown("<div class='section-header'><h2>🔍 Multi-tiered Validation</h2></div>", unsafe_allow_html=True)
-st.markdown("<div class='step-card'>", unsafe_allow_html=True)
+with st.expander("STEP 2 — Multi-Tiered Validation (Rule → RAG → Cosine → HITL)"):
+    validation = validate_data(
+        selected,
+        extracted,
+        neurology_notes[selected],
+        radiology_reports[selected]
+    )
 
-validation = validate_data(
-    selected,
-    extracted,
-    neurology_notes[selected],
-    radiology_reports[selected]
-)
+    # --------------------
+    st.subheader("1) 🔎 Rule-Based Verification")
+    for m in validation["Rule"]:
+        if "❗" in m:
+            st.markdown(highlight_red(m), unsafe_allow_html=True)
+        else:
+            st.markdown(highlight_green(m), unsafe_allow_html=True)
 
-# Rule-based
-st.subheader("1) Rule-Based Verification")
-for m in validation["Rule"]:
-    st.markdown(h_red(m) if "❗" in m else h_green(m), unsafe_allow_html=True)
+    # --------------------
+    st.markdown("---")
+    st.subheader("2) 📚 RAG Verification (Semantic vs Original Note)")
+    for m in validation["RAG"]:
+        if "❗" in m:
+            st.markdown(highlight_red(m), unsafe_allow_html=True)
+        else:
+            st.markdown(highlight_green(m), unsafe_allow_html=True)
 
-# RAG
+    # --------------------
+    st.markdown("---")
+    st.subheader("3) 📈 Cosine Similarity Flagging (Population-level anomaly detection)")
+    for m in validation["Cosine"]:
+        if "❗" in m:
+            st.markdown(highlight_red(m), unsafe_allow_html=True)
+        else:
+            st.markdown(highlight_green(m), unsafe_allow_html=True)
+
+    # --------------------
+    st.markdown("---")
+    st.subheader("4) 🧑‍⚕️ HITL Review Recommendation")
+    if "❗" in validation["HITL"]:
+        st.markdown(highlight_red(validation["HITL"]), unsafe_allow_html=True)
+    else:
+        st.markdown(highlight_green(validation["HITL"]), unsafe_allow_html=True)
+
+
+# =====================================================================
+# STEP 3: HITL-Assisted Correction (New Section)
+# =====================================================================
+
 st.markdown("---")
-st.subheader("2) RAG Verification")
-for m in validation["RAG"]:
-    st.markdown(h_red(m) if "❗" in m else h_green(m), unsafe_allow_html=True)
+with st.expander("STEP 3 — Corrected Structured Output (HITL-assisted)"):
 
-# Cosine
-st.markdown("---")
-st.subheader("3) Cosine Similarity Flagging")
-for m in validation["Cosine"]:
-    st.markdown(h_red(m) if "❗" in m else h_green(m), unsafe_allow_html=True)
+    corrected, changed = hitl_correction(selected, extracted, validation)
 
-# HITL
-st.markdown("---")
-st.subheader("4) HITL Recommendation")
-st.markdown(
-    h_red(validation["HITL"]) if "❗" in validation["HITL"] else h_green(validation["HITL"]),
-    unsafe_allow_html=True
-)
+    if changed:
+        st.markdown(
+            "<p style='color:#cc0000;font-weight:700;font-size:18px;'>"
+            "⚠️ Validation detected issues — corrected values applied (HITL simulation)</p>",
+            unsafe_allow_html=True
+        )
+    else:
+        st.markdown(
+            "<p style='color:#008800;font-weight:700;font-size:18px;'>"
+            "✔ No issues — extracted data accepted without correction</p>",
+            unsafe_allow_html=True
+        )
 
-st.markdown("</div>", unsafe_allow_html=True)
-
+    st.json(corrected)
 
 # =====================================================================
-# STEP 3 — HITL-Assisted Correction
-# =====================================================================
-
-st.markdown("<div class='step-card'><h3>STEP 3 — Corrected Structured Output (HITL)</h3>", unsafe_allow_html=True)
-
-corrected, changed = hitl_correction(selected, extracted, validation)
-
-if changed:
-    st.markdown("<p style='color:#cc0000;font-weight:700;'>⚠️ Corrections applied</p>", unsafe_allow_html=True)
-else:
-    st.markdown("<p style='color:#008800;font-weight:700;'>✔ No correction needed</p>", unsafe_allow_html=True)
-
-st.json(corrected)
-st.markdown("</div>", unsafe_allow_html=True)
-
-
-# =====================================================================
-# STEP 4 — Prediction
+# STEP 4: Prediction (now based on corrected values)
 # =====================================================================
 
 st.markdown("<div class='step-card'><h3>STEP 4 — Prediction</h3>", unsafe_allow_html=True)
@@ -581,9 +563,8 @@ st.markdown(f"""
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-
 # =====================================================================
-# STEP 5 — Export
+# STEP 5: CSV Export
 # =====================================================================
 
 final_df = pd.DataFrame([{**corrected, "Predicted_Poor_Outcome_Probability": prob}])
