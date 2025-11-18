@@ -39,6 +39,17 @@ card_style = """
 
 step_badge = lambda x: f"<div style='background:#0047AB;color:white;padding:6px 12px;border-radius:6px;display:inline-block;margin-bottom:10px;font-weight:600;'>{x}</div>"
 
+llm_container_style = """
+<div style="
+    background-color:#F5F8FF;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    margin-top:30px;
+    margin-bottom:30px;
+    border-left:8px solid #0047AB;
+">
+"""
 
 # =====================================================================
 # 0) Neurology Notes – ASPECT 5 / 6 / 10 (original detailed version)
@@ -212,29 +223,6 @@ aspect_images = {
     "Example Case 2": "images/aspects2.png",
     "Example Case 3": "images/aspects3.png"
 }
-
-llm_container_style = """
-<div style="
-    background-color:#F5F8FF;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    margin-top:30px;
-    margin-bottom:30px;
-    border-left:8px solid #0047AB;
-">
-"""
-
-
-# ===============================================================
-# LLM PROCESSING PIPELINE (Container 시작)
-# ===============================================================
-
-st.markdown(
-    llm_container_style +
-    "<h2 style='color:#0047AB;margin-top:0;'>🤖 LLM Processing Pipeline</h2>",
-    unsafe_allow_html=True
-)
 
 # ===============================================================
 # Extraction Results (with intentional hallucinations for 2 cases)
@@ -433,8 +421,6 @@ def hitl_correction(selected, extracted, validation):
 
     return corrected, True
 
-# LLM container 종료
-st.markdown("</div>", unsafe_allow_html=True)
 
 # =====================================================================
 # UI START
@@ -486,7 +472,15 @@ with col3:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
+# ===============================================================
+# LLM PROCESSING PIPELINE (Container 시작)
+# ===============================================================
 
+st.markdown(
+    llm_container_style +
+    "<h2 style='color:#0047AB;margin-top:0;'>🤖 LLM Processing Pipeline</h2>",
+    unsafe_allow_html=True
+)
 
 # =====================================================================
 # STEP 1: Extraction Output
@@ -568,6 +562,9 @@ with st.expander("STEP 3 — Corrected Structured Output (HITL-assisted)"):
 
     st.json(corrected)
 
+
+# LLM container 종료
+st.markdown("</div>", unsafe_allow_html=True)
 
 # =====================================================================
 # STEP 4: Prediction (now based on corrected values)
