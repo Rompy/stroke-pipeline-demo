@@ -557,6 +557,17 @@ with st.expander("STEP 4 — Prediction (Mock Model)"):
     st.metric("Predicted Poor Outcome Probability", f"{prob:.2f}")
     st.write("Prediction is based on corrected structured data.")
 
+    # ========================
+    # ADD: Gradient Risk Bar
+    # ========================
+    st.markdown(f"""
+    <div style='height:22px;border-radius:12px;margin-top:12px;
+        background:linear-gradient(90deg, #ff6666 {prob*100}%, #e0e0e0 {prob*100}%);'>
+    </div>
+    <p style='font-size:16px;font-weight:600;margin-top:6px;'>{prob*100:.1f}% predicted poor outcome</p>
+    """, unsafe_allow_html=True)
+
+
 
 # =====================================================================
 # STEP 5: CSV Export
