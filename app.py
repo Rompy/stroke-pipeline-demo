@@ -39,9 +39,9 @@ card_style = """
 
 step_badge = lambda x: f"<div style='background:#0047AB;color:white;padding:6px 12px;border-radius:6px;display:inline-block;margin-bottom:10px;font-weight:600;'>{x}</div>"
 
-# ===============================================================
-# 0) Neurology Notes – 3 Cases
-# ===============================================================
+# =====================================================================
+# 0) Neurology Notes – ASPECT 5 / 6 / 10 (original detailed version)
+# =====================================================================
 
 neurology_notes = {
     "Example Case 1":
@@ -58,22 +58,33 @@ August 25, 2018 at 21:40 (LKW 21:30)
 - No known atrial fibrillation  
 - No prior stroke  
 
+**Social History:**  
+- Smoking 0.5 pack/day × 10 yrs  
+- Alcohol 2 drinks/day × 15 yrs  
+
 **Present Illness:**  
-Sudden right arm and leg weakness with dysarthria at home.  
+Sudden right arm and leg weakness with dysarthria while at home.  
+Persistent symptoms; required assistance for ambulation.
 
-**Vitals:**  
-BP 178/92  
+**Vitals:** BP 178/92, HR 84, RR 18, Temp 36.8°C  
+**Initial NIHSS:** 9  
 
-**NIHSS:** 9  
+**Neurological Examination:**  
+- Mental: Alert, mild dysarthria  
+- CN: Right facial droop  
+- Motor: RUE 3/5, RLE 3/5; LUE/LLE 5/5  
+- Sensory: Right side decreased light touch  
+- Cerebellum: No ataxia  
+- Reflexes: Normal  
 
-**Impression:**  
-Acute left MCA stroke; tPA administered at 22:35.
+**Treatment:**  
+IV tPA administered at 22:35 (0.9 mg/kg).
 """,
 
     "Example Case 2":
     """
 **Chief Complaint:**  
-Aphasia, left-sided heaviness  
+Aphasia and left-sided heaviness  
 
 **Onset:**  
 September 3, 2018 at 19:10
@@ -81,17 +92,24 @@ September 3, 2018 at 19:10
 **Past Medical History:**  
 - Diabetes mellitus  
 - Hypertension  
+- No AFib  
+- No prior stroke  
+
+**Social History:**  
+- Non-smoker  
+- Occasional alcohol  
 
 **Present Illness:**  
-Expressive difficulty + left arm heaviness  
+Expressive difficulty + left arm heaviness; symptoms fluctuated then persisted.
 
-**Vitals:**  
-BP 162/88  
+**Vitals:** BP 162/88, HR 76, RR 18, Temp 37°C  
+**Initial NIHSS:** 5  
 
-**NIHSS:** 5  
-
-**Impression:**  
-Early ischemic change in right MCA.
+**Neurological Examination:**  
+- Mental: Mild aphasia  
+- Motor: LUE 4+/5, LLE 4/5  
+- Sensory: Intact  
+- CN & Cerebellum: Normal 
 """,
 
     "Example Case 3":
@@ -105,36 +123,84 @@ August 24, 2018 at 23:30
 **Past Medical History:**  
 - Hypertension  
 - Diabetes mellitus  
+- Treated pulmonary TB  
+- Chronic hepatitis B  
 
-**NIHSS:** 0  
+**Social History:**  
+- Smoking 0.5 pack/day × 10 yrs  
+- Alcohol 1–2 drinks/day × 20 yrs  
 
-**Impression:**  
-No acute lesion; normal CT/MRI.
+**Present Illness:**  
+Dizziness, chills, transient bilateral leg weakness while playing billiards.
+
+**Vitals:** BP 211/90, HR 73, RR 20, Temp 36.7°C  
+**Initial NIHSS:** 0  
+
+**Neurological Examination:**  
+UE 5/5, LE 4+/5 bilaterally; CN intact; cerebellum intact; reflexes normal.
 """
 }
 
-# ===============================================================
-# Radiology Reports – detailed MRI findings
-# ===============================================================
+
+# =====================================================================
+# Radiology Reports – original detailed MRI text
+# =====================================================================
 
 radiology_reports = {
     "Example Case 1":
     """
-MRI Brain shows restricted diffusion in the left insula, frontal operculum,
-and parietal cortex. Consistent with acute left MCA infarction. No hemorrhage.
+MRI BRAIN WITH AND WITHOUT CONTRAST
+Technique:
+Multiplanar, multisequence MRI of the brain including T1, T2, FLAIR, DWI/ADC, GRE/SWI, and post-contrast imaging. TOF MRA of the intracranial circulation was obtained.
+Findings:
+DWI shows restricted diffusion involving the left insula, left frontal operculum, and anterior parietal cortex, consistent with an acute infarction in the left MCA territory.
+ADC maps confirm low signal corresponding to areas of restricted diffusion.
+FLAIR demonstrates mild cortical swelling and subtle hyperintensity in the same regions, compatible with early ischemic change.
+No intracranial hemorrhage is noted on GRE/SWI.
+Major intracranial arteries: TOF MRA reveals decreased flow-related signal in the proximal left M2/M3 branches, without complete occlusion.
+No mass effect significant enough to shift midline; ventricles remain symmetric.
+Basal ganglia, thalami, brainstem, and cerebellum are preserved.
+No abnormal meningeal or parenchymal enhancement following contrast.
+Conclusion:
+Findings consistent with acute ischemic infarction in the left MCA territory, with corresponding cortical restricted diffusion and early FLAIR changes. No hemorrhagic transformation.
 """,
 
     "Example Case 2":
     """
-MRI shows mild cortical diffusion restriction in right MCA distribution,
-compatible with early ischemia. No hemorrhage or mass effect.
+MRI BRAIN WITHOUT CONTRAST
+Technique:
+Multiplanar, multisequence MRI including T1, T2, FLAIR, DWI/ADC, and SWI. TOF intracranial MRA performed.
+Findings:
+DWI shows punctate to patchy areas of mildly increased signal in the left basal ganglia and parietal opercular regions, suspicious for early acute ischemia.
+ADC demonstrates subtle low-signal correlation but less pronounced than in established infarction.
+FLAIR shows faint cortical/subcortical hyperintensity without significant swelling.
+No hemorrhage on SWI.
+Intracranial vasculature: TOF MRA shows mild irregularity of the left M2 segment, without definite large-vessel occlusion.
+Ventricles, midline structures, posterior fossa appear normal.
+No mass lesion or abnormal enhancement.
+Conclusion:
+MRI findings suggest early left MCA territory ischemia, with mild cortical diffusion restriction but no hemorrhage or large-vessel occlusion.
 """,
 
     "Example Case 3":
     """
-Normal MRI brain. No diffusion restriction. No abnormal enhancement.
-""",
+MRI BRAIN WITH AND WITHOUT CONTRAST
+Technique:
+Multiplanar T1, T2, FLAIR, DWI/ADC, GRE/SWI, and post-contrast sequences. 3D TOF MRA obtained.
+Findings:
+Parenchyma: No diffusion restriction. No areas of abnormal T2/FLAIR hyperintensity. Gray–white differentiation preserved.
+No hemorrhage on GRE/SWI.
+No mass lesion, midline shift, or extra-axial collection.
+Ventricular system normal in size and configuration.
+Posterior fossa (brainstem and cerebellum) unremarkable.
+Intracranial circulation: TOF MRA demonstrates normal flow-related signal in bilateral ICA, MCA, ACA, PCA territories. No stenosis or occlusion.
+Enhancement: No abnormal parenchymal or leptomeningeal enhancement.
+Paranasal sinuses/orbits normal.
+Conclusion:
+Normal MRI brain. No acute infarction or structural abnormality detected.
+"""
 }
+
 
 # ===============================================================
 # ASPECTS Images (CT examples)
@@ -282,7 +348,6 @@ def validate_data(selected, extracted, note_text, radiology_text):
 
     if sim < 0.82:
         cos.append(f"❗ Cosine similarity = {sim:.2f} (<0.82) → population-level outlier.")
-        cos.append("   (Note: This step does *not* perform clinical reasoning; it detects atypical variable combinations.)")
     else:
         cos.append(f"✔ Cosine similarity = {sim:.2f} → within validated population patterns.")
 
