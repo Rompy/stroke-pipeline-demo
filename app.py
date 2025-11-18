@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
-st.title("🧠 Stroke Pipeline Demo (Enhanced Mock Version)")
+st.title("🧠 Stroke Pipeline Demo")
 st.write("A multimodal extraction–validation–prediction pipeline using text, imaging, and structured variables.")
 
 # =====================================================================
