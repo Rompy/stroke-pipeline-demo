@@ -554,7 +554,6 @@ with st.expander("STEP 4 — Prediction (Mock Model)"):
     else:
         prob = 0.10
 
-    st.metric("Predicted Poor Outcome Probability", f"{prob:.2f}")
     st.write("Prediction is based on corrected structured data.")
 
     # ========================
