@@ -38,7 +38,7 @@ management_stage = "Patient Info\nManagement"
 input_x = 0
 pipeline_x_start = 2.5  # Further increased
 pipeline_x_spacing = 1.6  # Significantly increased from 1.35
-output_x_start = pipeline_x_start + len(pipeline_stages) * pipeline_x_spacing + 1.8  # More gap
+output_x_start = pipeline_x_start + len(pipeline_stages) * pipeline_x_spacing + 1.6  # More gap
 management_x = output_x_start + 3.5  # More gap
 
 y_pos = 0
