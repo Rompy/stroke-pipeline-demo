@@ -28,7 +28,7 @@ st.markdown("### 📊 Pipeline Architecture")
 fig_flow = go.Figure()
 
 # Define all stages
-input_stage = "Clinical\nNotes"
+input_stage = "Clinical\nData"
 pipeline_stages = ["LLM\nExtraction", "Rule-Based\nValidation", "RAG\nVerification", 
                    "Cosine\nSimilarity", "HITL\nReview", "Corrected\nData"]
 output_stages = ["Prediction\nModel", "Risk\nScore"]
@@ -36,9 +36,9 @@ management_stage = "Patient Info\nManagement"
 
 # Positioning
 input_x = 0
-pipeline_x_start = 1.5
+pipeline_x_start = 1.6
 pipeline_x_spacing = 1.1
-output_x_start = pipeline_x_start + len(pipeline_stages) * pipeline_x_spacing + 0.5
+output_x_start = pipeline_x_start + len(pipeline_stages) * pipeline_x_spacing + 0.8
 management_x = output_x_start + 2.5
 
 y_pos = 0
