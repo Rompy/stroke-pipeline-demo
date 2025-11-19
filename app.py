@@ -8,7 +8,7 @@ import plotly.express as px
 st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
 
 # ===============================================================
-# 1) PIPELINE FLOW DIAGRAM (TOP) - IMPROVED WITH GROUPING
+# 1) PIPELINE FLOW DIAGRAM (TOP) 
 # ===============================================================
 st.markdown("""
 <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
@@ -34,11 +34,11 @@ pipeline_stages = ["LLM\nExtract", "Rule\nValidation", "RAG\nVerify",
 output_stages = ["Risk\nScore"]
 management_stage = "Patient Info\nManagement"
 
-# Positioning - MAXIMUM SPACING
+# Positioning 
 input_x = 0
-pipeline_x_start = 3.5  # Further increased
-pipeline_x_spacing = 1.6  # Significantly increased from 1.35
-output_x_start = pipeline_x_start + len(pipeline_stages) * pipeline_x_spacing + 1.6  # More gap
+pipeline_x_start = 3.3 
+pipeline_x_spacing = 1.6
+output_x_start = pipeline_x_start + len(pipeline_stages) * pipeline_x_spacing + 1.6 
 management_x = output_x_start + 3.5  # More gap
 
 y_pos = 0
@@ -102,7 +102,7 @@ fig_flow.add_annotation(
     arrowcolor='#333'
 )
 
-# 2) Pipeline Stages - SMALLER SIZE, ORIGINAL FONT
+# 2) Pipeline Stages 
 for i, stage in enumerate(pipeline_stages):
     x = pipeline_x_positions[i]
     fig_flow.add_trace(go.Scatter(
@@ -111,7 +111,7 @@ for i, stage in enumerate(pipeline_stages):
         marker=dict(size=90, color=pipeline_colors[i], line=dict(width=3, color='white')),  # Reduced to 90
         text=stage.replace('\n', '<br>'),
         textposition='middle center',
-        textfont=dict(color='white', size=10, family='Arial Black'),  # Keep original size
+        textfont=dict(color='white', size=9, family='Arial Black'),  # Keep original size
         hoverinfo='text',
         hovertext=f"Pipeline Stage {i+1}: {stage}",
         showlegend=False
@@ -185,7 +185,7 @@ fig_flow.update_layout(
 
 st.plotly_chart(fig_flow, use_container_width=True)
 
-# Add explanatory text
+# Explanatory text
 st.info("""
 **Pipeline Flow:**
 1. 📝 **Clinical Data** → Input unstructured clinical notes, radiology reports, and imaging
