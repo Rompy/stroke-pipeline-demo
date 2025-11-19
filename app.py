@@ -82,51 +82,8 @@ with st.sidebar:
     st.markdown("### 📈 Model Performance")
     
     # Gauge charts for key metrics
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        fig_acc = go.Figure(go.Indicator(
-            mode="gauge+number",
-            value=97.0,
-            title={'text': "Extraction<br>Accuracy"},
-            gauge={
-                'axis': {'range': [0, 100]},
-                'bar': {'color': "#28a745"},
-                'steps': [
-                    {'range': [0, 70], 'color': "#ffebee"},
-                    {'range': [70, 90], 'color': "#fff3cd"},
-                    {'range': [90, 100], 'color': "#d4edda"}
-                ],
-                'threshold': {
-                    'line': {'color': "red", 'width': 4},
-                    'thickness': 0.75,
-                    'value': 95
-                }
-            }
-        ))
-        fig_acc.update_layout(height=200, margin=dict(l=10, r=10, t=50, b=10))
-        st.plotly_chart(fig_acc, use_container_width=True)
-    
-    with col2:
-        fig_auc = go.Figure(go.Indicator(
-            mode="gauge+number",
-            value=0.816,
-            number={'suffix': "", 'valueformat': '.3f'},
-            title={'text': "TabPFN<br>AUROC"},
-            gauge={
-                'axis': {'range': [0, 1]},
-                'bar': {'color': "#0047AB"},
-                'steps': [
-                    {'range': [0, 0.7], 'color': "#ffebee"},
-                    {'range': [0.7, 0.8], 'color': "#fff3cd"},
-                    {'range': [0.8, 1], 'color': "#d4edda"}
-                ]
-            }
-        ))
-        fig_auc.update_layout(height=200, margin=dict(l=10, r=10, t=50, b=10))
-        st.plotly_chart(fig_auc, use_container_width=True)
-    
-    st.markdown("---")
+    st.metric("Extraction Accuracy", "97.0%", "After HITL")
+    st.metric("TabPFN AUROC", "0.816", "95% CI: 0.784-0.847")
     st.metric("Grounding Accuracy", "93.2%", "RAG Stage")
     st.metric("Inference Time", "8.3s", "per patient")
     st.metric("Training Cohort", "1,166", "patients")
@@ -187,8 +144,8 @@ card_style = """
 
 step_badge = lambda x: f"<div style='background:#0047AB;color:white;padding:6px 12px;border-radius:6px;display:inline-block;margin-bottom:10px;font-weight:600;'>{x}</div>"
 
-# Badge for simplified demo
-simplified_badge = """<span style='background:#ffc107;color:#000;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-left:10px;'>SIMPLIFIED</span>"""
+# Badge for simplified demo - Streamlit doesn't render HTML in expander titles
+simplified_badge = "⚠️ [SIMPLIFIED DEMO]"
 
 # =====================================================================
 # 0) Neurology Notes
@@ -279,9 +236,9 @@ Normal MRI brain. No acute infarction or structural abnormality detected.
 }
 
 aspect_images = {
-    "Example Case 1": "https://via.placeholder.com/400x300/667eea/ffffff?text=ASPECT+Score+7",
-    "Example Case 2": "https://via.placeholder.com/400x300/764ba2/ffffff?text=ASPECT+Score+9",
-    "Example Case 3": "https://via.placeholder.com/400x300/28a745/ffffff?text=ASPECT+Score+10"
+    "Example Case 1": "images/aspects1.png",
+    "Example Case 2": "images/aspects2.png",
+    "Example Case 3": "images/aspects3.png"
 }
 
 # ===============================================================
