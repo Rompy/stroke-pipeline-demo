@@ -33,7 +33,7 @@ stages = ["Clinical\nNotes", "LLM\nExtraction", "Rule-Based\nValidation",
           "Corrected\nData", "Prediction\nModel", "Risk\nScore"]
 
 # Increase spacing between circles
-x_pos = [i * 1.2 for i in range(len(stages))]  # Changed from 1.0 to 1.2 for more spacing
+x_pos = [i * 1.4 for i in range(len(stages))]  # Changed from 1.0 to 1.2 for more spacing
 y_pos = [0] * len(stages)
 
 # Add boxes only (NO CONNECTING LINES)
