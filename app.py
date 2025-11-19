@@ -41,7 +41,7 @@ for i, stage in enumerate(stages):
     fig_flow.add_trace(go.Scatter(
         x=[x_pos[i]], y=[y_pos[i]],
         mode='markers+text',
-        marker=dict(size=120, color=color, line=dict(width=3, color='white')),
+        marker=dict(size=110, color=color, line=dict(width=3, color='white')),
         text=stage.replace('\n', '<br>'),
         textposition='middle center',
         textfont=dict(color='white', size=14, family='Arial Black'),
