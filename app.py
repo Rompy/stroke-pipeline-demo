@@ -158,7 +158,7 @@ Given the clear onset time and absence of contraindications, IV tPA was administ
 
     "Example Case 2":
     """
-A 72-year-old female with a medical history of hypertension and diabetes mellitus, and without atrial fibrillation, dyslipidemia, cardiovascular disease, prior stroke, ESRD, or malignancy, presented with expressive aphasia and a sensation of heaviness in the left upper extremity. The symptoms began on September 3, 2018 at approximately 19:10. She denied smoking but reported occasional alcohol use.
+A 73-year-old female with a medical history of hypertension and diabetes mellitus, and without atrial fibrillation, dyslipidemia, cardiovascular disease, prior stroke, ESRD, or malignancy, presented with expressive aphasia and a sensation of heaviness in the left upper extremity. The symptoms began on September 3, 2018 at approximately 19:10. She denied smoking but reported occasional alcohol use.
 Her symptoms initially fluctuated but eventually persisted. On examination in the emergency department, her vital signs were BP 162/88, HR 76, RR 18, and temperature 37.0°C. Neurologic exam revealed mild aphasia, 4+/5 strength in the left upper extremity, 4/5 in the left lower extremity, intact sensation, and no cranial nerve or cerebellar abnormalities. Her initial NIHSS was calculated as 5.
 No IV tPA or intra-arterial intervention was performed due to clinical judgment and imaging findings. There was no loss of consciousness, seizure activity, or head trauma reported.
 """
