@@ -93,10 +93,9 @@ st.warning("""
 - ✗ Real FAISS-based RAG system
 - ✗ Actual TabPFN prediction model
 
-**For the real implementation:** See the complete code in the repository with all exact hyperparameters and algorithms from the paper.
 """)
 
-st.title("🧠 Interactive Case Demonstration")
+st.title("🧠 Case Demonstration")
 st.write("Explore how the pipeline processes clinical data through multiple validation stages.")
 
 # ===============================================================
@@ -885,8 +884,6 @@ st.download_button(
 st.markdown("---")
 st.markdown("""
 <div style='text-align: center; color: #666; padding: 20px;'>
-    <p><b>📄 Paper:</b> Kim J, Kim JH, Choi A. End-to-End Pipeline Integrating Local Small-Scale Language Models and Machine Learning for Data Extraction and Stroke Outcome Prediction in Emergency Department. <i>Computational and Structural Biotechnology Journal</i>. 2025.</p>
-    <p><b>📧 Contact:</b> aromchoi@yuhs.ac | <b>🏥 Institution:</b> Yonsei University College of Medicine</p>
     <p style='font-size: 12px; margin-top: 10px;'>⚠️ This demo uses simplified logic for visualization. For actual implementation with reported performance, see the complete repository.</p>
 </div>
 """, unsafe_allow_html=True)
