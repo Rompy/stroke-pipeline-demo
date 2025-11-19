@@ -22,7 +22,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Pipeline Flow Diagram - SIMPLIFIED (NO CONNECTING LINES)
+# Pipeline Flow Diagram - SIMPLIFIED (NO CONNECTING LINES, LESS OVERLAP)
 st.markdown("### 📊 Pipeline Architecture")
 
 fig_flow = go.Figure()
@@ -32,7 +32,8 @@ stages = ["Clinical\nNotes", "LLM\nExtraction", "Rule-Based\nValidation",
           "RAG\nVerification", "Cosine\nSimilarity", "HITL\nReview", 
           "Corrected\nData", "Prediction\nModel", "Risk\nScore"]
 
-x_pos = list(range(len(stages)))
+# Increase spacing between circles
+x_pos = [i * 1.2 for i in range(len(stages))]  # Changed from 1.0 to 1.2 for more spacing
 y_pos = [0] * len(stages)
 
 # Add boxes only (NO CONNECTING LINES)
@@ -41,10 +42,10 @@ for i, stage in enumerate(stages):
     fig_flow.add_trace(go.Scatter(
         x=[x_pos[i]], y=[y_pos[i]],
         mode='markers+text',
-        marker=dict(size=110, color=color, line=dict(width=3, color='white')),
+        marker=dict(size=110, color=color, line=dict(width=3, color='white')),  # Reduced size from 120 to 110
         text=stage.replace('\n', '<br>'),
         textposition='middle center',
-        textfont=dict(color='white', size=14, family='Arial Black'),
+        textfont=dict(color='white', size=13, family='Arial Black'),  # Reduced font from 14 to 13
         hoverinfo='text',
         hovertext=f"Stage {i+1}: {stage}",
         showlegend=False
