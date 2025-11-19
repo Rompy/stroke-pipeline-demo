@@ -660,7 +660,7 @@ with st.expander(f"STEP 2 — Multi-Tiered Validation {simplified_badge}", expan
             st.markdown(highlight_green(msg), unsafe_allow_html=True)
 
     # Feedback Loop Indicator
-    flagged = any("❗" in msg for stage in validation.values() for msg in stage)
+    flagged = any("❗" in msg for key in ["Rule", "RAG", "Cosine"] for msg in validation[key])
 
     if flagged:
         st.markdown("""
