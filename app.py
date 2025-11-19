@@ -388,7 +388,7 @@ def validate_data(selected, extracted, note_text, radiology_text):
     val["Cosine"] = cos
     val["CosineSimilarity"] = sim
 
-    flagged = any("❗" in msg for stage in val.values() for msg in stage)
+    flagged = any("❗" in msg for key in ["Rule", "RAG", "Cosine"] for msg in val[key])
     val["HITL"] = "🔎 Needs manual review." if flagged else "✔ Auto-acceptable."
 
     return val
