@@ -66,7 +66,7 @@ fig_flow.add_shape(
 fig_flow.add_annotation(
     x=(min(pipeline_x_positions) + max(pipeline_x_positions)) / 2,
     y=0.75,
-    text="<b>Multi-Tiered Validation Pipeline</b>",
+    text="<b>The Pipeline</b>",
     showarrow=False,
     font=dict(size=14, color="#9370DB", family="Arial Black"),
     bgcolor="rgba(255,255,255,0.9)",
