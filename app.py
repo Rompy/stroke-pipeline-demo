@@ -30,8 +30,8 @@ fig_flow = go.Figure()
 # Define all stages
 input_stage = "Clinical\nData"
 pipeline_stages = ["LLM\nExtraction", "Rule-Based\nValidation", "RAG\nVerification", 
-                   "Cosine\nSimilarity", "HITL\nReview", "Corrected\nData"]
-output_stages = ["Prediction\nModel", "Risk\nScore"]
+                   "Cosine\nSimilarity", "HITL\nReview", "Corrected\nData", "Prediction\nModel"]
+output_stages = ["Risk\nScore"]
 management_stage = "Patient Info\nManagement"
 
 # Positioning
