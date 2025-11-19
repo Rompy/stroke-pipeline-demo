@@ -8,7 +8,7 @@ import plotly.express as px
 st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
 
 # ===============================================================
-# 1) PIPELINE FLOW DIAGRAM (TOP) - IMPROVED
+# 1) PIPELINE FLOW DIAGRAM (TOP) - NO CONNECTING LINES
 # ===============================================================
 st.markdown("""
 <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
@@ -22,7 +22,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Pipeline Flow Diagram - IMPROVED VERSION
+# Pipeline Flow Diagram - SIMPLIFIED (NO CONNECTING LINES)
 st.markdown("### 📊 Pipeline Architecture")
 
 fig_flow = go.Figure()
@@ -35,34 +35,23 @@ stages = ["Clinical\nNotes", "LLM\nExtraction", "Rule-Based\nValidation",
 x_pos = list(range(len(stages)))
 y_pos = [0] * len(stages)
 
-# Add boxes with LARGER size and NO arrows
+# Add boxes only (NO CONNECTING LINES)
 for i, stage in enumerate(stages):
     color = '#667eea' if i < 2 else ('#ffc107' if i < 6 else '#28a745' if i < 7 else '#dc3545')
     fig_flow.add_trace(go.Scatter(
         x=[x_pos[i]], y=[y_pos[i]],
         mode='markers+text',
-        marker=dict(size=120, color=color, line=dict(width=3, color='white')),  # Increased size
-        text=stage.replace('\n', '<br>'),  # Better line break
+        marker=dict(size=120, color=color, line=dict(width=3, color='white')),
+        text=stage.replace('\n', '<br>'),
         textposition='middle center',
-        textfont=dict(color='white', size=14, family='Arial Black'),  # Increased font size
+        textfont=dict(color='white', size=14, family='Arial Black'),
         hoverinfo='text',
         hovertext=f"Stage {i+1}: {stage}",
         showlegend=False
     ))
 
-# Add connecting lines instead of arrows for better visibility
-for i in range(len(stages)-1):
-    fig_flow.add_trace(go.Scatter(
-        x=[x_pos[i], x_pos[i+1]], 
-        y=[0, 0],
-        mode='lines',
-        line=dict(color='#333', width=3),
-        showlegend=False,
-        hoverinfo='skip'
-    ))
-
 fig_flow.update_layout(
-    height=220,  # Increased height
+    height=220,
     xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
     yaxis=dict(showgrid=False, showticklabels=False, zeroline=False, range=[-0.5, 0.5]),
     plot_bgcolor='rgba(0,0,0,0)',
@@ -141,11 +130,11 @@ card_style = """
 
 step_badge = lambda x: f"<div style='background:#0047AB;color:white;padding:6px 12px;border-radius:6px;display:inline-block;margin-bottom:10px;font-weight:600;'>{x}</div>"
 
-# Badge for simplified demo - Streamlit doesn't render HTML in expander titles
+# Badge for simplified demo
 simplified_badge = "⚠️ [SIMPLIFIED DEMO]"
 
 # =====================================================================
-# 0) Neurology Notes
+# 0) Neurology Notes - CORRECTED TO MATCH EXTRACTION
 # =====================================================================
 
 neurology_notes = {
@@ -158,7 +147,7 @@ Given the clear onset time and absence of contraindications, IV tPA was administ
 
     "Example Case 2":
     """
-A 73-year-old female with a medical history of hypertension and diabetes mellitus, and without atrial fibrillation, dyslipidemia, cardiovascular disease, prior stroke, ESRD, or malignancy, presented with expressive aphasia and a sensation of heaviness in the left upper extremity. The symptoms began on September 3, 2018 at approximately 19:10. She denied smoking but reported occasional alcohol use.
+A 72-year-old female with a medical history of hypertension and diabetes mellitus, and without atrial fibrillation, dyslipidemia, cardiovascular disease, prior stroke, ESRD, or malignancy, presented with expressive aphasia and a sensation of heaviness in the left upper extremity. The symptoms began on September 3, 2018 at approximately 19:10. She denied smoking but reported occasional alcohol use.
 Her symptoms initially fluctuated but eventually persisted. On examination in the emergency department, her vital signs were BP 162/88, HR 76, RR 18, and temperature 37.0°C. Neurologic exam revealed mild aphasia, 4+/5 strength in the left upper extremity, 4/5 in the left lower extremity, intact sensation, and no cranial nerve or cerebellar abnormalities. Her initial NIHSS was calculated as 5.
 No IV tPA or intra-arterial intervention was performed due to clinical judgment and imaging findings. There was no loss of consciousness, seizure activity, or head trauma reported.
 """
@@ -239,17 +228,17 @@ aspect_images = {
 }
 
 # ===============================================================
-# Extraction Results
+# Extraction Results - CORRECTED TO MATCH NOTES
 # ===============================================================
 
 extraction_results = {
     "Example Case 1": {
-        "Age": 67,
-        "Sex": "female",
+        "Age": 68,
+        "Sex": "male",
 
         "Hypertension": "yes",
         "Diabetes": "yes",
-        "Dyslipidemia": "yes",
+        "Dyslipidemia": "no",
         "Cardiovascular_Disease": "no",
         "Atrial_Fibrillation": "no",
         "Old_CVA": "no",
@@ -263,23 +252,23 @@ extraction_results = {
         "NIHSS": 9,
         "ASPECTS": 7,
 
-        "tPA_Administered": "no",
+        "tPA_Administered": "no",  # Intentional error for demo
         "IA_Thrombectomy": "no",
 
-        "Weakness_Side": "bilateral",
+        "Weakness_Side": "bilateral",  # Intentional error for demo
         "SBP": 178
     },
 
     "Example Case 2": {
-        "Age": 73,
-        "Sex": "male",
+        "Age": 72,
+        "Sex": "female",
 
-        "Hypertension": "no",
+        "Hypertension": "no",  # Intentional error for demo
         "Diabetes": "yes",
-        "Dyslipidemia": "yes",
+        "Dyslipidemia": "no",
         "Cardiovascular_Disease": "no",
         "Atrial_Fibrillation": "no",
-        "Old_CVA": "yes",
+        "Old_CVA": "no",
         "Malignancy": "no",
         "ESRD": "no",
 
@@ -288,7 +277,7 @@ extraction_results = {
         "MRI_Other_Lesion": "no",
 
         "NIHSS": 5,
-        "ASPECTS": 9,
+        "ASPECTS": 9,  # Intentional error for demo
 
         "tPA_Administered": "no",
         "IA_Thrombectomy": "no",
@@ -298,7 +287,7 @@ extraction_results = {
     },
 
     "Example Case 3": {
-        "Age": 62,
+        "Age": 63,
         "Sex": "male",
 
         "Hypertension": "yes",
@@ -372,13 +361,13 @@ def validate_data(selected, extracted, note_text, radiology_text):
         if "tpa" in full_text and extracted["tPA_Administered"] != "yes":
             rag.append("❗ tPA mismatch: note indicates tPA was given.")
         if "right" in full_text and extracted["Weakness_Side"] != "right":
-            rag.append("❗ Weakness side mismatch.")
+            rag.append("❗ Weakness side mismatch: note indicates right-sided weakness.")
         if extracted["MRI_Acute_Infarct"] == "yes" and extracted["ASPECTS"] > 7:
             rag.append("❗ ASPECT too high for acute MCA infarction.")
 
     if selected == "Example Case 2":
-        if extracted["Hypertension"] == "no" and extracted["SBP"] >= 160:
-            rag.append("❗ High BP suggests hypertension.")
+        if "hypertension" in full_text and extracted["Hypertension"] == "no":
+            rag.append("❗ Hypertension mismatch: note indicates hypertension history.")
         if extracted["MRI_Acute_Infarct"] == "yes" and extracted["ASPECTS"] >= 8:
             rag.append("❗ ASPECT inconsistent with early ischemia severity.")
 
@@ -532,7 +521,6 @@ with col3:
 
 with st.expander(f"STEP 1 — LLM Extraction Output {simplified_badge}", expanded=False):
     
-    # 9) Detailed explanation toggle
     with st.container():
         st.info("""
         ℹ️ **What is this step?**
@@ -551,7 +539,7 @@ with st.expander(f"STEP 1 — LLM Extraction Output {simplified_badge}", expande
     extracted = extraction_results[selected]
     st.json(extracted)
     
-    st.caption("⚠️ Note: Intentional errors included (e.g., wrong sex, missing tPA) to demonstrate validation")
+    st.caption("⚠️ Note: Intentional errors included to demonstrate validation pipeline")
 
 
 # =====================================================================
@@ -560,7 +548,6 @@ with st.expander(f"STEP 1 — LLM Extraction Output {simplified_badge}", expande
 
 with st.expander(f"STEP 2 — Multi-Tiered Validation {simplified_badge}", expanded=True):
     
-    # 9) Detailed explanation
     with st.container():
         st.info("""
         ℹ️ **What is this step?**
@@ -586,7 +573,7 @@ with st.expander(f"STEP 2 — Multi-Tiered Validation {simplified_badge}", expan
         radiology_reports[selected]
     )
 
-    # 4) Validation Progress Bar
+    # Validation Progress Bar
     stages = ["Rule-Based", "RAG", "Cosine", "HITL"]
     stage_status = []
     
@@ -712,7 +699,6 @@ with st.expander(f"STEP 2 — Multi-Tiered Validation {simplified_badge}", expan
 st.markdown("---")
 with st.expander(f"STEP 3 — Corrected Output (HITL-Assisted) {simplified_badge}", expanded=True):
 
-    # 9) Detailed explanation
     with st.container():
         st.info("""
         ℹ️ **What is this step?**
@@ -751,7 +737,7 @@ with st.expander(f"STEP 3 — Corrected Output (HITL-Assisted) {simplified_badge
             unsafe_allow_html=True
         )
 
-    # 3) Before/After Comparison Table - FIXED BACKGROUND COLOR
+    # Before/After Comparison Table
     st.markdown("### 📊 Before/After Comparison")
     
     comparison_data = []
@@ -768,11 +754,11 @@ with st.expander(f"STEP 3 — Corrected Output (HITL-Assisted) {simplified_badge
     
     df_comparison = pd.DataFrame(comparison_data)
     
-    # FIXED: Color code changed rows with better contrast
+    # Color code changed rows
     def highlight_changes(row):
         if row['Status'] == "✓ Changed":
-            return ['background-color: #ffffcc; color: #000000'] * len(row)  # Light yellow with black text
-        return ['background-color: #ffffff; color: #000000'] * len(row)  # White background with black text
+            return ['background-color: #ffffcc; color: #000000'] * len(row)
+        return ['background-color: #ffffff; color: #000000'] * len(row)
     
     st.dataframe(
         df_comparison.style.apply(highlight_changes, axis=1),
@@ -787,7 +773,6 @@ with st.expander(f"STEP 3 — Corrected Output (HITL-Assisted) {simplified_badge
 
 with st.expander(f"STEP 4 — Outcome Prediction {simplified_badge}", expanded=True):
 
-    # 9) Detailed explanation
     with st.container():
         st.info("""
         ℹ️ **What is this step?**
@@ -821,7 +806,7 @@ with st.expander(f"STEP 4 — Outcome Prediction {simplified_badge}", expanded=T
     })
     st.dataframe(feature_df, hide_index=True, use_container_width=True)
 
-    # 7) SHAP-style Feature Importance
+    # SHAP-style Feature Importance
     st.markdown("### 📊 Feature Importance (Mock SHAP Values)")
     
     shap_data = pd.DataFrame({
@@ -853,153 +838,30 @@ with st.expander(f"STEP 4 — Outcome Prediction {simplified_badge}", expanded=T
 
 
 # ===============================================================
-# 5) ROC CURVE & 6) CALIBRATION PLOT - FIXED TO MATCH PAPER
+# 5) ROC CURVE & 6) CALIBRATION PLOT - USING ACTUAL IMAGES
 # ===============================================================
 with st.expander("📈 Model Performance Visualization (From Paper)"):
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("### ROC Curves Comparison")
-        
-        # Create realistic ROC curves matching the paper's reported AUROCs
-        # AUROC = 0.700 (Logistic Regression)
-        # AUROC = 0.789 (CatBoost)
-        # AUROC = 0.816 (TabPFN - Specialized)
-        
-        fpr = np.linspace(0, 1, 100)
-        
-        # Logistic Regression (AUROC = 0.700)
-        # Using beta distribution to create realistic curve
-        tpr_lr = np.power(fpr, 0.85) * 0.95
-        
-        # CatBoost (AUROC = 0.789)
-        tpr_cb = np.power(fpr, 0.65) * 0.98
-        
-        # TabPFN (AUROC = 0.816) - Best performance
-        tpr_tab = np.power(fpr, 0.55) * 0.99
-        
-        fig_roc = go.Figure()
-        
-        # Random classifier (diagonal)
-        fig_roc.add_trace(go.Scatter(
-            x=[0, 1], y=[0, 1], 
-            mode='lines',
-            name='Random (AUROC = 0.500)',
-            line=dict(color='gray', width=2, dash='dash')
-        ))
-        
-        # Logistic Regression
-        fig_roc.add_trace(go.Scatter(
-            x=fpr, y=tpr_lr, 
-            mode='lines', 
-            name='Logistic Regression (AUROC = 0.700)',
-            line=dict(color='#ffc107', width=2.5)
-        ))
-        
-        # CatBoost
-        fig_roc.add_trace(go.Scatter(
-            x=fpr, y=tpr_cb, 
-            mode='lines',
-            name='CatBoost (AUROC = 0.789)',
-            line=dict(color='#17a2b8', width=2.5)
-        ))
-        
-        # TabPFN - best
-        fig_roc.add_trace(go.Scatter(
-            x=fpr, y=tpr_tab, 
-            mode='lines',
-            name='TabPFN - Specialized (AUROC = 0.816)',
-            line=dict(color='#dc3545', width=3)
-        ))
-        
-        fig_roc.update_layout(
-            title='ROC Comparisons of Prediction Models',
-            xaxis_title='False Positive Rate',
-            yaxis_title='True Positive Rate (Sensitivity)',
-            height=450,
-            legend=dict(x=0.4, y=0.15, bgcolor='rgba(255,255,255,0.8)'),
-            plot_bgcolor='white',
-            xaxis=dict(gridcolor='lightgray', range=[0, 1]),
-            yaxis=dict(gridcolor='lightgray', range=[0, 1])
-        )
-        st.plotly_chart(fig_roc, use_container_width=True)
+        st.image("images/roc.png", use_container_width=True)
+        st.caption("**Figure**: ROC curves comparing Logistic Regression (AUROC=0.700), CatBoost (AUROC=0.789), and TabPFN-Specialized (AUROC=0.816)")
     
     with col2:
         st.markdown("### Precision-Recall Comparison")
-        
-        # Create Precision-Recall curves
-        # All models have similar AUPRC (~0.315) as stated in paper
-        recall = np.linspace(0, 1, 100)
-        
-        # Create realistic PR curves that all converge to similar AUPRC
-        # Starting from high precision at low recall
-        
-        # Logistic Regression
-        precision_lr = 0.9 / (1 + 8 * recall)
-        
-        # CatBoost - slightly better
-        precision_cb = 0.95 / (1 + 7.5 * recall)
-        
-        # TabPFN - similar performance in AUPRC despite better AUROC
-        precision_tab = 1.0 / (1 + 7.8 * recall)
-        
-        # Baseline (prevalence)
-        baseline = 0.284  # Poor outcome rate from paper
-        
-        fig_pr = go.Figure()
-        
-        # Baseline
-        fig_pr.add_trace(go.Scatter(
-            x=[0, 1], y=[baseline, baseline],
-            mode='lines',
-            name=f'Baseline (Prevalence = {baseline:.3f})',
-            line=dict(color='gray', width=2, dash='dash')
-        ))
-        
-        # Logistic Regression
-        fig_pr.add_trace(go.Scatter(
-            x=recall, y=precision_lr,
-            mode='lines',
-            name='Logistic Regression (AUPRC = 0.315)',
-            line=dict(color='#ffc107', width=2.5)
-        ))
-        
-        # CatBoost
-        fig_pr.add_trace(go.Scatter(
-            x=recall, y=precision_cb,
-            mode='lines',
-            name='CatBoost (AUPRC = 0.315)',
-            line=dict(color='#17a2b8', width=2.5)
-        ))
-        
-        # TabPFN
-        fig_pr.add_trace(go.Scatter(
-            x=recall, y=precision_tab,
-            mode='lines',
-            name='TabPFN - Specialized (AUPRC = 0.316)',
-            line=dict(color='#dc3545', width=3)
-        ))
-        
-        fig_pr.update_layout(
-            title='Precision-Recall Comparison of Models',
-            xaxis_title='Recall',
-            yaxis_title='Precision',
-            height=450,
-            legend=dict(x=0.4, y=0.85, bgcolor='rgba(255,255,255,0.8)'),
-            plot_bgcolor='white',
-            xaxis=dict(gridcolor='lightgray', range=[0, 1]),
-            yaxis=dict(gridcolor='lightgray', range=[0, 1])
-        )
-        st.plotly_chart(fig_pr, use_container_width=True)
+        st.image("images/prc.png", use_container_width=True)
+        st.caption("**Figure**: Precision-Recall curves showing similar AUPRC (~0.315) across all models due to class imbalance")
     
-    # Add calibration note
+    # Add summary insights
     st.success("✓ All models demonstrated good calibration (Hosmer-Lemeshow test p > 0.05)")
     st.info("""
     **Key Insights from Paper:**
-    - TabPFN achieved best discrimination (AUROC = 0.816)
+    - TabPFN achieved best discrimination (AUROC = 0.816, 95% CI: 0.784-0.847)
     - All models show similar AUPRC (~0.315) due to class imbalance (28.4% poor outcomes)
-    - Despite lower AUROC, all models maintained good calibration
+    - Despite different AUROC values, all models maintained good calibration
     - AUPRC more informative than AUROC for imbalanced datasets
+    - Results validate that automatically extracted data enables reliable outcome prediction
     """)
 
 
