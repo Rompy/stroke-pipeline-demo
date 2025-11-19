@@ -45,8 +45,8 @@ y_pos = 0
 
 # Colors
 input_color = '#667eea'
-pipeline_colors = ['#667eea', '#ffc107', '#ffc107', '#ffc107', '#ffc107', '#28a745']
-output_colors = ['#dc3545', '#dc3545']
+pipeline_colors = ['#667eea', '#ffc107', '#ffc107', '#ffc107', '#ffc107', '#28a745', '#dc3545']
+output_colors = ['#dc3545']
 management_color = '#6c757d'
 
 # Add background rectangle for pipeline group
@@ -79,10 +79,10 @@ fig_flow.add_annotation(
 fig_flow.add_trace(go.Scatter(
     x=[input_x], y=[y_pos],
     mode='markers+text',
-    marker=dict(size=110, color=input_color, line=dict(width=3, color='white')),
+    marker=dict(size=120, color=input_color, line=dict(width=3, color='white')),
     text=input_stage.replace('\n', '<br>'),
     textposition='middle center',
-    textfont=dict(color='white', size=13, family='Arial Black'),
+    textfont=dict(color='white', size=11, family='Arial Black'),
     hoverinfo='text',
     hovertext="Input: Clinical Notes",
     showlegend=False
@@ -108,10 +108,10 @@ for i, stage in enumerate(pipeline_stages):
     fig_flow.add_trace(go.Scatter(
         x=[x], y=[y_pos],
         mode='markers+text',
-        marker=dict(size=100, color=pipeline_colors[i], line=dict(width=3, color='white')),
+        marker=dict(size=110, color=pipeline_colors[i], line=dict(width=3, color='white')),
         text=stage.replace('\n', '<br>'),
         textposition='middle center',
-        textfont=dict(color='white', size=11, family='Arial Black'),
+        textfont=dict(color='white', size=10, family='Arial Black'),
         hoverinfo='text',
         hovertext=f"Pipeline Stage {i+1}: {stage}",
         showlegend=False
@@ -137,10 +137,10 @@ for i, stage in enumerate(output_stages):
     fig_flow.add_trace(go.Scatter(
         x=[x], y=[y_pos],
         mode='markers+text',
-        marker=dict(size=110, color=output_colors[i], line=dict(width=3, color='white')),
+        marker=dict(size=120, color=output_colors[i], line=dict(width=3, color='white')),
         text=stage.replace('\n', '<br>'),
         textposition='middle center',
-        textfont=dict(color='white', size=13, family='Arial Black'),
+        textfont=dict(color='white', size=11, family='Arial Black'),
         hoverinfo='text',
         hovertext=f"Output: {stage}",
         showlegend=False
@@ -165,10 +165,10 @@ fig_flow.add_annotation(
 fig_flow.add_trace(go.Scatter(
     x=[management_x], y=[y_pos],
     mode='markers+text',
-    marker=dict(size=110, color=management_color, line=dict(width=3, color='white')),
+    marker=dict(size=120, color=management_color, line=dict(width=3, color='white')),
     text=management_stage.replace('\n', '<br>'),
     textposition='middle center',
-    textfont=dict(color='white', size=12, family='Arial Black'),
+    textfont=dict(color='white', size=11, family='Arial Black'),
     hoverinfo='text',
     hovertext="Outcome: Patient Information Management",
     showlegend=False
