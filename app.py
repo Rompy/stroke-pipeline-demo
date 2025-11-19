@@ -8,7 +8,7 @@ import plotly.express as px
 st.set_page_config(page_title="Stroke Pipeline Demo", layout="wide")
 
 # ===============================================================
-# 1) PIPELINE FLOW DIAGRAM (TOP) - IMPROVED WITH GROUPING
+# 1) PIPELINE FLOW DIAGRAM (TOP) 
 # ===============================================================
 st.markdown("""
 <div style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
@@ -29,17 +29,17 @@ fig_flow = go.Figure()
 
 # Define all stages
 input_stage = "Clinical\nData"
-pipeline_stages = ["LLM\nExtraction", "Rule-Based\nValidation", "RAG\nVerification", 
-                   "Cosine\nSimilarity", "HITL\nReview", "Corrected\nData", "Prediction\nModel"]
+pipeline_stages = ["LLM\nExtract", "Rule\nValidation", "RAG\nVerify", 
+                   "Cosine\nCheck", "HITL\nReview", "Corrected\nData", "Prediction\nModel"]
 output_stages = ["Risk\nScore"]
 management_stage = "Patient Info\nManagement"
 
-# Positioning - INCREASED SPACING
+# Positioning - FURTHER INCREASED SPACING
 input_x = 0
-pipeline_x_start = 2.0  # Increased from 1.6
-pipeline_x_spacing = 1.25  # Increased from 1.1
-output_x_start = pipeline_x_start + len(pipeline_stages) * pipeline_x_spacing + 1.2  # Increased gap
-management_x = output_x_start + 2.8  # Increased from 2.5
+pipeline_x_start = 2.2
+pipeline_x_spacing = 1.35  # Further increased from 1.25
+output_x_start = pipeline_x_start + len(pipeline_stages) * pipeline_x_spacing + 1.4
+management_x = output_x_start + 3.0
 
 y_pos = 0
 
@@ -53,8 +53,8 @@ management_color = '#6c757d'
 pipeline_x_positions = [pipeline_x_start + i * pipeline_x_spacing for i in range(len(pipeline_stages))]
 fig_flow.add_shape(
     type="rect",
-    x0=min(pipeline_x_positions) - 0.9,  # Increased margin
-    x1=max(pipeline_x_positions) + 0.9,  # Increased margin
+    x0=min(pipeline_x_positions) - 1.0,
+    x1=max(pipeline_x_positions) + 1.0,
     y0=-0.65,
     y1=0.65,
     line=dict(color="#9370DB", width=3, dash="dash"),
@@ -79,7 +79,7 @@ fig_flow.add_annotation(
 fig_flow.add_trace(go.Scatter(
     x=[input_x], y=[y_pos],
     mode='markers+text',
-    marker=dict(size=115, color=input_color, line=dict(width=3, color='white')),  # Reduced from 120
+    marker=dict(size=115, color=input_color, line=dict(width=3, color='white')),
     text=input_stage.replace('\n', '<br>'),
     textposition='middle center',
     textfont=dict(color='white', size=11, family='Arial Black'),
@@ -90,7 +90,7 @@ fig_flow.add_trace(go.Scatter(
 
 # Arrow: Input → Pipeline
 fig_flow.add_annotation(
-    x=pipeline_x_positions[0] - 0.7,  # Adjusted for spacing
+    x=pipeline_x_positions[0] - 0.7,
     y=y_pos,
     ax=input_x + 0.65,
     ay=y_pos,
@@ -102,16 +102,16 @@ fig_flow.add_annotation(
     arrowcolor='#333'
 )
 
-# 2) Pipeline Stages
+# 2) Pipeline Stages - REDUCED SIZE AND FONT
 for i, stage in enumerate(pipeline_stages):
     x = pipeline_x_positions[i]
     fig_flow.add_trace(go.Scatter(
         x=[x], y=[y_pos],
         mode='markers+text',
-        marker=dict(size=105, color=pipeline_colors[i], line=dict(width=3, color='white')),  # Reduced from 110
+        marker=dict(size=95, color=pipeline_colors[i], line=dict(width=3, color='white')),  # Reduced from 105 to 95
         text=stage.replace('\n', '<br>'),
         textposition='middle center',
-        textfont=dict(color='white', size=10, family='Arial Black'),
+        textfont=dict(color='white', size=9, family='Arial Black'),  # Reduced from 10 to 9
         hoverinfo='text',
         hovertext=f"Pipeline Stage {i+1}: {stage}",
         showlegend=False
@@ -119,7 +119,7 @@ for i, stage in enumerate(pipeline_stages):
 
 # Arrow: Pipeline → Output
 fig_flow.add_annotation(
-    x=output_x_start - 0.7,  # Adjusted for spacing
+    x=output_x_start - 0.7,
     y=y_pos,
     ax=max(pipeline_x_positions) + 0.65,
     ay=y_pos,
@@ -137,7 +137,7 @@ for i, stage in enumerate(output_stages):
     fig_flow.add_trace(go.Scatter(
         x=[x], y=[y_pos],
         mode='markers+text',
-        marker=dict(size=115, color=output_colors[i], line=dict(width=3, color='white')),  # Reduced from 120
+        marker=dict(size=115, color=output_colors[i], line=dict(width=3, color='white')),
         text=stage.replace('\n', '<br>'),
         textposition='middle center',
         textfont=dict(color='white', size=11, family='Arial Black'),
@@ -149,7 +149,7 @@ for i, stage in enumerate(output_stages):
 # Arrow: Output → Management
 output_last_x = output_x_start + (len(output_stages) - 1) * 1.3
 fig_flow.add_annotation(
-    x=management_x - 0.7,  # Adjusted for spacing
+    x=management_x - 0.7,
     y=y_pos,
     ax=output_last_x + 0.65,
     ay=y_pos,
@@ -165,10 +165,10 @@ fig_flow.add_annotation(
 fig_flow.add_trace(go.Scatter(
     x=[management_x], y=[y_pos],
     mode='markers+text',
-    marker=dict(size=115, color=management_color, line=dict(width=3, color='white')),  # Reduced from 120
+    marker=dict(size=115, color=management_color, line=dict(width=3, color='white')),
     text=management_stage.replace('\n', '<br>'),
     textposition='middle center',
-    textfont=dict(color='white', size=10, family='Arial Black'),
+    textfont=dict(color='white', size=9, family='Arial Black'),  # Reduced from 10 to 9
     hoverinfo='text',
     hovertext="Outcome: Patient Information Management",
     showlegend=False
@@ -189,7 +189,7 @@ st.plotly_chart(fig_flow, use_container_width=True)
 st.info("""
 **Pipeline Flow:**
 1. 📝 **Clinical Data** → Input unstructured clinical notes, radiology reports, and imaging
-2. 🔄 **The Pipeline** → Extract, validate, and correct data through multi processing layers
+2. 🔄 **The Pipeline** → Extract, validate, and correct data through 7 processing layers
 3. 🎯 **Risk Score** → Generate stroke outcome predictions (mRS 3-6 probability)
 4. 💾 **Patient Information Management** → Store structured data for clinical decision support and research
 """)
